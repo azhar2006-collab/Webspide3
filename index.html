@@ -3,888 +3,1256 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rhythm Divine – Yoga & Wellness Club | Chennai</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Rhythm Divine – Yoga & Wellness | Chennai</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --saffron:   #C8622A;
-    --gold:      #D4A843;
-    --cream:     #FAF5EC;
-    --sage:      #7A8C6E;
-    --deep:      #1C1510;
-    --warm:      #3D2B1A;
-    --light-sage:#B5C4A8;
-    --blush:     #E8D5C0;
-  }
+/* ═══════════════════════════════════════════════
+   TOKENS
+═══════════════════════════════════════════════ */
+:root {
+  --saffron: #C8622A;
+  --saffron2: #E07840;
+  --gold:    #D4A843;
+  --gold2:   #F0C86A;
+  --cream:   #FAF5EC;
+  --sage:    #6B7D5E;
+  --deep:    #0E0B08;
+  --warm:    #1E1208;
+  --brown:   #2E1A0E;
+  --blush:   #E8D5C0;
+  --muted:   rgba(250,245,236,0.55);
+}
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--cream);
+  color: var(--deep);
+  overflow-x: hidden;
+  cursor: none;
+}
+body.loading { overflow: hidden; }
 
-  html { scroll-behavior: smooth; }
+/* ═══════════════════════════════════════════════
+   CUSTOM CURSOR
+═══════════════════════════════════════════════ */
+#cursor-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--saffron);
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: transform 0.05s;
+}
+#cursor-ring {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1.5px solid rgba(200,98,42,0.5);
+  position: fixed; top: 0; left: 0;
+  pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: all 0.18s ease;
+}
+#cursor-ring.hover {
+  width: 56px; height: 56px;
+  border-color: var(--gold);
+  background: rgba(212,168,67,0.07);
+}
 
-  body {
-    font-family: 'Jost', sans-serif;
-    background: var(--cream);
-    color: var(--deep);
-    overflow-x: hidden;
-  }
+/* ═══════════════════════════════════════════════
+   PRELOADER
+═══════════════════════════════════════════════ */
+#preloader {
+  position: fixed; inset: 0; z-index: 10000;
+  background: var(--warm);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 2rem;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#preloader.done { opacity: 0; visibility: hidden; }
+#loader-canvas { width: 160px; height: 160px; }
+.loader-text {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem; letter-spacing: 0.45em;
+  text-transform: uppercase; color: var(--gold);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
 
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; width: 100%; z-index: 999;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 4rem;
-    background: rgba(250,245,236,0.92);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(200,98,42,0.15);
-    transition: padding 0.3s;
-  }
-  .nav-logo {
-    font-family: 'Cinzel', serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--saffron);
-    letter-spacing: 0.06em;
-    line-height: 1.2;
-  }
-  .nav-logo span { display: block; font-size: 0.65rem; color: var(--sage); font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; }
-  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-  .nav-links a { font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--warm); text-decoration: none; transition: color 0.2s; }
-  .nav-links a:hover { color: var(--saffron); }
-  .nav-cta {
-    background: var(--saffron); color: #fff;
-    padding: 0.6rem 1.5rem; border-radius: 2px;
-    font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
-    text-decoration: none; transition: background 0.2s;
-  }
-  .nav-cta:hover { background: var(--warm); }
+/* ═══════════════════════════════════════════════
+   SCROLL PROGRESS
+═══════════════════════════════════════════════ */
+#scroll-bar {
+  position: fixed; top: 0; left: 0; height: 2px;
+  background: linear-gradient(90deg, var(--saffron), var(--gold));
+  z-index: 9000; width: 0%; transition: width 0.1s linear;
+}
 
-  /* ── HERO ── */
-  .hero {
-    min-height: 100vh;
-    display: grid; grid-template-columns: 1fr 1fr;
-    position: relative; overflow: hidden;
-  }
-  .hero-left {
+/* ═══════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; width: 100%; z-index: 8000;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.4rem 5rem;
+  transition: all 0.4s ease;
+}
+nav.scrolled {
+  background: rgba(14,11,8,0.92);
+  backdrop-filter: blur(20px);
+  padding: 0.9rem 5rem;
+  border-bottom: 1px solid rgba(212,168,67,0.12);
+}
+.nav-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--gold); letter-spacing: 0.08em;
+  line-height: 1.2; text-decoration: none;
+}
+.nav-logo span {
+  display: block; font-size: 0.6rem;
+  font-family: 'Jost', sans-serif;
+  color: rgba(212,168,67,0.55);
+  letter-spacing: 0.3em; text-transform: uppercase; font-weight: 300;
+}
+.nav-links { display: flex; gap: 2.8rem; list-style: none; }
+.nav-links a {
+  font-size: 0.75rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--muted);
+  text-decoration: none; position: relative;
+  transition: color 0.3s;
+}
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -4px; left: 0; width: 0; height: 1px;
+  background: var(--gold); transition: width 0.35s ease;
+}
+.nav-links a:hover { color: var(--cream); }
+.nav-links a:hover::after { width: 100%; }
+.nav-cta {
+  background: transparent;
+  border: 1px solid rgba(200,98,42,0.5);
+  color: var(--saffron2); padding: 0.6rem 1.6rem;
+  font-size: 0.72rem; letter-spacing: 0.2em;
+  text-transform: uppercase; text-decoration: none;
+  border-radius: 2px; position: relative; overflow: hidden;
+  transition: color 0.3s;
+}
+.nav-cta::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--saffron);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.35s ease; z-index: -1;
+}
+.nav-cta:hover { color: #fff; }
+.nav-cta:hover::before { transform: scaleX(1); }
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  z-index: 8001;
+}
+.hamburger span {
+  width: 25px;
+  height: 2px;
+  background: var(--gold);
+  transition: all 0.3s ease;
+}
+.hamburger.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ═══════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  background: var(--warm);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center;
+}
+#petal-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 1;
+}
+.hero-mandala-wrap {
+  position: absolute; right: -5vw; top: 50%;
+  transform: translateY(-50%);
+  width: 65vmin; height: 65vmin;
+  opacity: 0.1; z-index: 2;
+}
+#mandala-canvas { width: 100%; height: 100%; }
+.hero-content {
+  position: relative; z-index: 3;
+  padding: 0 6rem; max-width: 780px;
+}
+.hero-eyebrow {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 2rem;
+  font-size: 0.7rem; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--gold);
+  opacity: 0; transform: translateY(20px);
+  animation: rise 0.8s 1.2s forwards ease;
+}
+.hero-eyebrow-line {
+  width: 50px; height: 1px; background: var(--gold);
+  transform: scaleX(0); transform-origin: left;
+  animation: lineGrow 0.6s 1s forwards ease;
+}
+@keyframes lineGrow { to { transform: scaleX(1); } }
+.hero-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(3rem, 5.5vw, 6rem);
+  font-weight: 700; line-height: 1.05;
+  color: var(--cream); margin-bottom: 2rem;
+}
+.hero-title .word {
+  display: inline-block; overflow: hidden;
+}
+.hero-title .word span {
+  display: inline-block;
+  transform: translateY(110%);
+  animation: wordRise 0.9s forwards cubic-bezier(0.22,1,0.36,1);
+}
+.hero-title .word:nth-child(1) span { animation-delay: 0.3s; }
+.hero-title .word:nth-child(2) span { animation-delay: 0.45s; }
+.hero-title .word:nth-child(3) span { animation-delay: 0.6s; color: var(--gold); font-style: italic; font-family: 'Cormorant Garamond', serif; }
+.hero-title .line2 .word:nth-child(1) span { animation-delay: 0.75s; }
+.hero-title .line2 .word:nth-child(2) span { animation-delay: 0.9s; }
+.hero-title .line2 .word:nth-child(3) span { animation-delay: 1.05s; }
+@keyframes wordRise { to { transform: translateY(0); } }
+@keyframes rise { to { opacity:1; transform:translateY(0); } }
+.hero-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem; font-weight: 300; line-height: 1.8;
+  color: rgba(232,213,192,0.75);
+  max-width: 480px; margin-bottom: 3rem;
+  opacity: 0; transform: translateY(20px);
+  animation: rise 0.8s 1.4s forwards ease;
+}
+.hero-actions {
+  display: flex; gap: 1.4rem; flex-wrap: wrap;
+  opacity: 0; transform: translateY(20px);
+  animation: rise 0.8s 1.6s forwards ease;
+}
+.btn-hero-primary {
+  background: var(--saffron); color: #fff;
+  padding: 1rem 2.4rem; border-radius: 2px;
+  font-size: 0.78rem; letter-spacing: 0.2em;
+  text-transform: uppercase; text-decoration: none;
+  position: relative; overflow: hidden;
+  transition: transform 0.2s;
+}
+.btn-hero-primary:hover { transform: translateY(-3px); }
+.btn-hero-primary::after {
+  content: ''; position: absolute;
+  inset: 0; background: rgba(255,255,255,0.15);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+}
+.btn-hero-primary:hover::after { transform: translateX(100%); }
+.btn-hero-ghost {
+  border: 1px solid rgba(250,245,236,0.2);
+  color: var(--cream); padding: 1rem 2.4rem;
+  border-radius: 2px; font-size: 0.78rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  text-decoration: none; transition: all 0.3s;
+}
+.btn-hero-ghost:hover {
+  border-color: var(--gold); color: var(--gold);
+  background: rgba(212,168,67,0.07);
+}
+.hero-scroll-hint {
+  position: absolute; bottom: 2.5rem; left: 50%;
+  transform: translateX(-50%); z-index: 3;
+  display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+  opacity: 0; animation: rise 0.8s 2.2s forwards ease;
+}
+.scroll-label { font-size: 0.62rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--muted); }
+.scroll-line {
+  width: 1px; height: 50px; background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollDrop 1.8s 2.5s ease-in-out infinite;
+}
+@keyframes scrollDrop {
+  0%,100%{transform:scaleY(0);transform-origin:top;opacity:0}
+  50%{transform:scaleY(1);transform-origin:top;opacity:1}
+}
+.hero-floating-tags {
+  position: absolute; right: 5rem; bottom: 6rem;
+  z-index: 3; display: flex; flex-direction: column; gap: 0.8rem;
+  opacity: 0; animation: rise 0.8s 1.8s forwards ease;
+}
+.htag {
+  display: flex; align-items: center; gap: 0.7rem;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(212,168,67,0.2);
+  border-radius: 40px; padding: 0.55rem 1.2rem;
+  font-size: 0.72rem; letter-spacing: 0.08em; color: var(--blush);
+  animation: floatTag 4s ease-in-out infinite;
+}
+.htag:nth-child(2) { animation-delay: 1s; }
+.htag:nth-child(3) { animation-delay: 2s; }
+@keyframes floatTag {
+  0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)}
+}
+.htag-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+
+/* ═══════════════════════════════════════════════
+   MARQUEE STRIP
+═══════════════════════════════════════════════ */
+.marquee-strip {
+  background: var(--saffron);
+  padding: 0.9rem 0; overflow: hidden;
+}
+.marquee-track {
+  display: flex; gap: 0; white-space: nowrap;
+  animation: marquee 28s linear infinite;
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+.marquee-item {
+  display: inline-flex; align-items: center; gap: 1rem;
+  font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: rgba(255,255,255,0.9); padding: 0 2.5rem;
+}
+.marquee-sep { color: rgba(255,255,255,0.4); font-size: 0.5rem; }
+
+/* ═══════════════════════════════════════════════
+   REVEAL ANIMATIONS
+═══════════════════════════════════════════════ */
+.reveal {
+  opacity: 0; transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal.in { opacity: 1; transform: none; }
+.reveal-left {
+  opacity: 0; transform: translateX(-50px);
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal-left.in { opacity: 1; transform: none; }
+.reveal-right {
+  opacity: 0; transform: translateX(50px);
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal-right.in { opacity: 1; transform: none; }
+.d1 { transition-delay: 0.1s; }
+.d2 { transition-delay: 0.2s; }
+.d3 { transition-delay: 0.3s; }
+.d4 { transition-delay: 0.4s; }
+.d5 { transition-delay: 0.5s; }
+.d6 { transition-delay: 0.6s; }
+
+/* ═══════════════════════════════════════════════
+   SECTION SHARED
+═══════════════════════════════════════════════ */
+.s-label {
+  display: flex; align-items: center; gap: 0.8rem;
+  font-size: 0.68rem; letter-spacing: 0.38em;
+  text-transform: uppercase; color: var(--saffron);
+  margin-bottom: 1rem;
+}
+.s-label::before { content:''; width:32px; height:1px; background:var(--saffron); }
+.s-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2rem, 3.5vw, 3.4rem);
+  font-weight: 600; line-height: 1.12;
+  color: var(--warm); margin-bottom: 1.2rem;
+}
+.s-title em {
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--saffron); font-weight: 400;
+}
+
+/* ═══════════════════════════════════════════════
+   ABOUT
+═══════════════════════════════════════════════ */
+.about {
+  background: var(--brown);
+  display: grid; grid-template-columns: 1fr 1fr;
+  min-height: 90vh;
+}
+.about-left {
+  padding: 8rem 5rem; display: flex;
+  flex-direction: column; justify-content: center;
+}
+.about .s-label { color: var(--gold2); }
+.about .s-label::before { background: var(--gold2); }
+.about .s-title { color: var(--cream); }
+.about .s-title em { color: var(--gold); }
+.about-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.18rem; font-weight: 300; line-height: 1.9;
+  color: rgba(232,213,192,0.72); margin-bottom: 3rem;
+}
+.about-text p + p { margin-top: 1.2rem; }
+
+.about-right {
+  background: var(--deep);
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1px; padding: 1px;
+  position: relative; overflow: hidden;
+}
+.about-right::before {
+  content:'';
+  position: absolute; inset:0; z-index:5;
+  background: radial-gradient(ellipse at center, transparent 40%, var(--deep) 100%);
+  pointer-events: none;
+}
+.stat-cell {
+  background: var(--brown);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 3rem 2rem; text-align: center;
+  position: relative; overflow: hidden;
+  transition: background 0.4s;
+}
+.stat-cell::before {
+  content:'';
+  position: absolute; inset:0;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(200,98,42,0.12) 0%, transparent 70%);
+  opacity: 0; transition: opacity 0.4s;
+}
+.stat-cell:hover { background: rgba(200,98,42,0.08); }
+.stat-cell:hover::before { opacity: 1; }
+.stat-num {
+  font-family: 'Cinzel', serif;
+  font-size: 3.2rem; color: var(--gold);
+  font-weight: 600; line-height: 1;
+  margin-bottom: 0.5rem;
+}
+.stat-lbl {
+  font-size: 0.7rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--muted);
+}
+
+/* ═══════════════════════════════════════════════
+   PROGRAMS
+═══════════════════════════════════════════════ */
+.programs {
+  padding: 9rem 6rem;
+  background: var(--cream);
+  position: relative; overflow: hidden;
+}
+.programs::before {
+  content:'';
+  position: absolute; top:-200px; right:-200px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,98,42,0.05) 0%, transparent 70%);
+}
+.programs-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2.5rem; margin-top: 5rem;
+}
+.prog-card {
+  border-radius: 8px; overflow: hidden;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.1s ease, box-shadow 0.4s ease;
+}
+.prog-card:hover { box-shadow: 0 30px 80px rgba(0,0,0,0.18); }
+.prog-banner {
+  padding: 4rem 3rem 3rem; position: relative; overflow: hidden;
+}
+.prog-card:nth-child(1) .prog-banner {
+  background: linear-gradient(140deg, #5a7050 0%, #3a5030 100%);
+}
+.prog-card:nth-child(2) .prog-banner {
+  background: linear-gradient(140deg, #C8622A 0%, #7a3010 100%);
+}
+.prog-banner-glow {
+  position: absolute; bottom: -60px; right: -60px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+  transition: transform 0.6s ease;
+}
+.prog-card:hover .prog-banner-glow { transform: scale(1.5); }
+.prog-banner-ring {
+  position: absolute; top: 1.5rem; right: 1.5rem;
+  width: 90px; height: 90px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  animation: ringPulse 3s ease-in-out infinite;
+}
+@keyframes ringPulse {
+  0%,100%{transform:scale(1);opacity:0.5}
+  50%{transform:scale(1.15);opacity:0.2}
+}
+.prog-icon { font-size: 2.8rem; display: block; margin-bottom: 1.2rem; }
+.prog-for {
+  font-size: 0.65rem; letter-spacing: 0.3em;
+  text-transform: uppercase; color: rgba(255,255,255,0.55);
+  margin-bottom: 0.5rem;
+}
+.prog-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.9rem; color: #fff; font-weight: 600;
+  line-height: 1.15;
+}
+.prog-body { background: #fff; padding: 2.5rem 3rem; }
+.prog-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; line-height: 1.78; color: #666;
+  margin-bottom: 1.8rem;
+}
+.prog-feats { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+.prog-feats li {
+  display: flex; align-items: center; gap: 0.8rem;
+  font-size: 0.84rem; color: var(--warm);
+}
+.feat-dot {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid rgba(200,98,42,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.55rem; color: var(--saffron); flex-shrink: 0;
+  transition: background 0.3s, border-color 0.3s;
+}
+.prog-feats li:hover .feat-dot {
+  background: var(--saffron); border-color: var(--saffron);
+  color: #fff;
+}
+
+/* ═══════════════════════════════════════════════
+   OFFERINGS GRID
+═══════════════════════════════════════════════ */
+.offerings {
+  background: var(--warm);
+  padding: 9rem 6rem;
+}
+.offerings .s-label { color: var(--gold2); }
+.offerings .s-label::before { background: var(--gold2); }
+.offerings .s-title { color: var(--cream); }
+.offerings .s-title em { color: var(--gold); }
+.off-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.5px; margin-top: 5rem;
+  background: rgba(212,168,67,0.1);
+  border: 1px solid rgba(212,168,67,0.1);
+  border-radius: 6px; overflow: hidden;
+}
+.off-card {
+  background: var(--brown);
+  padding: 3rem 2.5rem;
+  position: relative; overflow: hidden;
+  transition: background 0.4s;
+}
+.off-card::after {
+  content:'';
+  position: absolute; bottom:0; left:0; right:0; height:2px;
+  background: linear-gradient(90deg, var(--saffron), var(--gold));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.off-card:hover { background: rgba(200,98,42,0.08); }
+.off-card:hover::after { transform: scaleX(1); }
+.off-ico { font-size: 2.2rem; margin-bottom: 1.4rem; display: block; }
+.off-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem; color: var(--cream);
+  margin-bottom: 0.8rem; letter-spacing: 0.05em;
+}
+.off-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; line-height: 1.7;
+  color: rgba(232,213,192,0.55);
+}
+
+/* ═══════════════════════════════════════════════
+   SCHEDULE
+═══════════════════════════════════════════════ */
+.schedule {
+  padding: 9rem 6rem;
+  background: #F2EDE3;
+}
+.schedule-table-wrap {
+  margin-top: 4rem;
+  border: 1px solid rgba(200,98,42,0.15);
+  border-radius: 6px; overflow: hidden;
+}
+table { width: 100%; border-collapse: collapse; }
+thead tr { background: var(--saffron); }
+thead th {
+  font-size: 0.65rem; letter-spacing: 0.28em;
+  text-transform: uppercase; color: rgba(255,255,255,0.85);
+  padding: 1.2rem 1.8rem; text-align: left;
+  font-weight: 500;
+}
+tbody tr {
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  transition: background 0.25s;
+  opacity: 0; transform: translateX(-20px);
+  animation: rowIn 0.5s forwards ease;
+}
+tbody tr.row-visible { opacity: 1; transform: none; }
+@keyframes rowIn { to {opacity:1; transform:none;} }
+tbody tr:hover { background: rgba(200,98,42,0.04); }
+tbody tr:last-child { border-bottom: none; }
+td {
+  padding: 1.2rem 1.8rem;
+  font-size: 0.88rem; color: var(--warm);
+}
+.badge {
+  display: inline-block; padding: 0.28rem 0.85rem;
+  border-radius: 2px; font-size: 0.66rem;
+  letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500;
+}
+.b-w { background: rgba(200,98,42,0.12); color: var(--saffron); }
+.b-k { background: rgba(107,125,94,0.15); color: var(--sage); }
+.b-o { background: rgba(212,168,67,0.15); color: #a07800; }
+
+/* ═══════════════════════════════════════════════
+   WHY US
+═══════════════════════════════════════════════ */
+.why {
+  padding: 9rem 6rem;
+  background: var(--cream);
+  text-align: center;
+}
+.why-grid {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  gap: 0; margin-top: 6rem;
+  border: 1px solid rgba(0,0,0,0.07);
+  border-radius: 6px; overflow: hidden;
+}
+.why-cell {
+  padding: 3rem 2rem; position: relative;
+  border-right: 1px solid rgba(0,0,0,0.07);
+  transition: background 0.35s;
+  overflow: hidden;
+}
+.why-cell:last-child { border-right: none; }
+.why-cell::before {
+  content:'';
+  position: absolute; top:0; left:0; right:0; height: 3px;
+  background: linear-gradient(90deg, var(--saffron), var(--gold));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s ease;
+}
+.why-cell:hover { background: rgba(200,98,42,0.03); }
+.why-cell:hover::before { transform: scaleX(1); }
+.why-num {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem; letter-spacing: 0.3em;
+  color: var(--saffron); margin-bottom: 1.5rem;
+}
+.why-ico { font-size: 2rem; margin-bottom: 1rem; display: block; }
+.why-cell h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem; color: var(--warm);
+  margin-bottom: 0.8rem; letter-spacing: 0.03em;
+}
+.why-cell p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; line-height: 1.72; color: #777;
+}
+
+/* ═══════════════════════════════════════════════
+   TESTIMONIALS
+═══════════════════════════════════════════════ */
+.testi {
+  background: var(--warm); padding: 9rem 0;
+  overflow: hidden;
+}
+.testi-header { padding: 0 6rem; margin-bottom: 5rem; }
+.testi .s-label { color: var(--gold2); }
+.testi .s-label::before { background: var(--gold2); }
+.testi .s-title { color: var(--cream); }
+.testi .s-title em { color: var(--gold); }
+.testi-track {
+  display: flex; gap: 2rem;
+  padding: 0 6rem;
+  animation: testiScroll 22s linear infinite;
+  width: max-content;
+}
+.testi-track:hover { animation-play-state: paused; }
+@keyframes testiScroll {
+  0%{transform:translateX(0)}
+  100%{transform:translateX(calc(-50% - 1rem))}
+}
+.testi-card {
+  background: var(--brown);
+  border: 1px solid rgba(212,168,67,0.1);
+  border-radius: 6px; padding: 2.5rem;
+  width: 380px; flex-shrink: 0;
+  position: relative; overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.testi-card:hover {
+  border-color: rgba(212,168,67,0.3);
+  transform: translateY(-6px);
+}
+.testi-card::before {
+  content:'\201C';
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 7rem; line-height: 0.6;
+  color: var(--saffron); opacity: 0.15;
+  position: absolute; top: 1.5rem; left: 1.2rem;
+}
+.testi-stars { color: var(--gold); font-size: 0.75rem; letter-spacing: 0.1em; margin-bottom: 1.2rem; }
+.testi-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem; font-style: italic;
+  line-height: 1.78; color: rgba(232,213,192,0.7);
+  margin-bottom: 1.8rem;
+}
+.testi-author { font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); font-weight: 500; }
+.testi-role { font-size: 0.72rem; color: rgba(250,245,236,0.3); margin-top: 0.25rem; }
+
+/* ═══════════════════════════════════════════════
+   CONTACT
+═══════════════════════════════════════════════ */
+.contact {
+  display: grid; grid-template-columns: 1fr 1.1fr;
+  min-height: 80vh;
+}
+.contact-left {
+  background: var(--deep); padding: 8rem 5rem;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.contact-left::before {
+  content:'';
+  position: absolute; bottom:-100px; left:-100px;
+  width: 400px; height: 400px; border-radius:50%;
+  background: radial-gradient(circle, rgba(200,98,42,0.12) 0%, transparent 70%);
+}
+.contact-left .s-label { color: var(--gold2); }
+.contact-left .s-label::before { background: var(--gold2); }
+.contact-left .s-title { color: var(--cream); }
+.contact-left .s-title em { color: var(--gold); }
+.contact-desc {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.12rem; color: var(--muted);
+  line-height: 1.8; margin-bottom: 3rem;
+}
+.contact-items { display: flex; flex-direction: column; gap: 1.6rem; }
+.c-item { display: flex; gap: 1.2rem; align-items: flex-start; }
+.c-ico {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: rgba(212,168,67,0.1);
+  border: 1px solid rgba(212,168,67,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+  transition: background 0.3s, transform 0.3s;
+}
+.c-item:hover .c-ico {
+  background: rgba(212,168,67,0.2);
+  transform: scale(1.1);
+}
+.c-text { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+.c-text strong { display: block; font-size: 0.65rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold2); margin-bottom: 0.2rem; font-weight: 400; }
+
+.contact-right {
+  background: var(--cream); padding: 8rem 5rem;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.contact-right .s-label { color: var(--saffron); }
+.form { display: flex; flex-direction: column; gap: 1.4rem; margin-top: 2.5rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.4rem; }
+.fg { position: relative; }
+.fg label {
+  display: block; font-size: 0.65rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--saffron);
+  margin-bottom: 0.55rem; font-weight: 500;
+}
+.fg input, .fg select, .fg textarea {
+  width: 100%;
+  background: transparent;
+  border: none; border-bottom: 1px solid rgba(0,0,0,0.15);
+  padding: 0.7rem 0; font-family: 'Jost', sans-serif;
+  font-size: 0.92rem; color: var(--deep);
+  outline: none; transition: border-color 0.3s;
+  border-radius: 0;
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus {
+  border-color: var(--saffron);
+}
+.fg input::placeholder, .fg textarea::placeholder { color: rgba(0,0,0,0.25); }
+.fg select { cursor: pointer; }
+.fg textarea { resize: none; min-height: 90px; }
+.fg::after {
+  content:''; position: absolute;
+  bottom:0; left:0; width:0; height:1px;
+  background: var(--saffron); transition: width 0.4s ease;
+}
+.fg:focus-within::after { width: 100%; }
+.btn-send {
+  background: var(--warm); color: var(--cream);
+  border: none; padding: 1.1rem 2.8rem;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.78rem; letter-spacing: 0.22em;
+  text-transform: uppercase; cursor: pointer;
+  border-radius: 2px; align-self: flex-start;
+  position: relative; overflow: hidden;
+  transition: transform 0.2s;
+}
+.btn-send:hover { transform: translateY(-2px); }
+.btn-send::after {
+  content:''; position: absolute; inset:0;
+  background: var(--saffron); transform: scaleX(0);
+  transform-origin: left; transition: transform 0.4s ease;
+  z-index: 0;
+}
+.btn-send span { position: relative; z-index: 1; }
+.btn-send:hover::after { transform: scaleX(1); }
+
+/* ═══════════════════════════════════════════════
+   HOURS
+═══════════════════════════════════════════════ */
+.hours-bar {
+  background: var(--saffron); padding: 1.6rem 6rem;
+  display: flex; align-items: center; gap: 4rem; flex-wrap: wrap;
+}
+.hrs-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem; letter-spacing: 0.25em;
+  text-transform: uppercase; color: rgba(255,255,255,0.85);
+}
+.hrs-list { display: flex; gap: 3rem; flex-wrap: wrap; flex: 1; }
+.hrs-item { font-size: 0.82rem; color: rgba(255,255,255,0.8); }
+.hrs-item strong { color: #fff; }
+.hrs-online {
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; padding: 0.4rem 1.3rem;
+  border-radius: 40px; font-size: 0.7rem;
+  letter-spacing: 0.18em;
+}
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════ */
+footer {
+  background: var(--deep); padding: 5rem 6rem 2.5rem;
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr;
+  gap: 4rem; margin-bottom: 4rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.footer-brand {
+  font-family: 'Cinzel', serif; font-size: 1.15rem;
+  color: var(--gold); font-weight: 600; margin-bottom: 1rem;
+}
+.footer-tagline {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; color: rgba(250,245,236,0.3);
+  line-height: 1.75;
+}
+.footer-col h4 {
+  font-size: 0.65rem; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 1.4rem;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+.footer-col ul a {
+  font-size: 0.84rem; color: rgba(250,245,236,0.35);
+  text-decoration: none; transition: color 0.25s;
+  position: relative; padding-left: 0;
+}
+.footer-col ul a:hover { color: var(--cream); padding-left: 8px; transition: color 0.25s, padding-left 0.25s; }
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 0.72rem; color: rgba(255,255,255,0.18); flex-wrap: wrap; gap: 0.5rem;
+}
+.footer-bottom a { color: rgba(212,168,67,0.5); text-decoration: none; transition: color 0.25s; }
+.footer-bottom a:hover { color: var(--gold); }
+
+/* ═══════════════════════════════════════════════
+   RIPPLE
+═══════════════════════════════════════════════ */
+.ripple-circle {
+  position: absolute; border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  transform: scale(0); animation: rippleOut 0.6s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes rippleOut {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  nav { padding: 1rem 2rem; }
+  nav.scrolled { padding: 0.8rem 2rem; }
+  .nav-links { gap: 1.5rem; }
+  .hero-content { padding: 0 2.5rem; }
+  .hero-floating-tags { display: none; }
+  .hero-mandala-wrap { opacity: 0.06; }
+  .about { grid-template-columns: 1fr; }
+  .about-right { grid-template-columns: 1fr 1fr; min-height: 300px; }
+  .about-left { padding: 5rem 2.5rem; }
+  .programs { padding: 6rem 2rem; }
+  .programs-grid { grid-template-columns: 1fr; }
+  .offerings { padding: 6rem 2rem; }
+  .off-grid { grid-template-columns: 1fr 1fr; }
+  .schedule { padding: 6rem 2rem; }
+  .why { padding: 6rem 2rem; }
+  .why-grid { grid-template-columns: 1fr 1fr; }
+  .why-cell:nth-child(2) { border-right: none; }
+  .testi-header { padding: 0 2rem; }
+  .testi-track { padding: 0 2rem; }
+  .contact { grid-template-columns: 1fr; }
+  .contact-left { padding: 5rem 2.5rem; }
+  .contact-right { padding: 5rem 2.5rem; }
+  .hours-bar { padding: 1.5rem 2rem; gap: 2rem; }
+  footer { padding: 4rem 2rem 2rem; }
+  .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .form-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .nav-cta { display: none; }
+  .nav-links {
+    position: fixed; top: 0; right: -100%;
+    width: 250px; height: 100vh;
     background: var(--warm);
-    display: flex; flex-direction: column; justify-content: center;
-    padding: 10rem 5rem 6rem 6rem;
-    position: relative; z-index: 2;
-  }
-  .hero-eyebrow {
-    font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 1.5rem;
-    display: flex; align-items: center; gap: 0.8rem;
-  }
-  .hero-eyebrow::before { content:''; display: block; width: 40px; height: 1px; background: var(--gold); }
-  .hero h1 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(2.6rem, 4vw, 4.2rem);
-    font-weight: 600; line-height: 1.12;
-    color: var(--cream);
-    margin-bottom: 1.8rem;
-  }
-  .hero h1 em { font-style: italic; font-family: 'Cormorant Garamond', serif; color: var(--gold); }
-  .hero-sub {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.25rem; font-weight: 300; line-height: 1.7;
-    color: var(--blush); max-width: 420px; margin-bottom: 2.8rem;
-  }
-  .hero-actions { display: flex; gap: 1.2rem; flex-wrap: wrap; }
-  .btn-primary {
-    background: var(--saffron); color: #fff;
-    padding: 0.9rem 2.2rem; border-radius: 2px;
-    font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase;
-    text-decoration: none; transition: background 0.2s, transform 0.2s;
-  }
-  .btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
-  .btn-outline {
-    border: 1px solid rgba(250,245,236,0.35); color: var(--cream);
-    padding: 0.9rem 2.2rem; border-radius: 2px;
-    font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase;
-    text-decoration: none; transition: border-color 0.2s, color 0.2s;
-  }
-  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
-
-  .hero-right {
-    position: relative; background: var(--blush);
-    overflow: hidden;
-  }
-  .hero-right::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: 
-      radial-gradient(ellipse 80% 60% at 60% 40%, rgba(200,98,42,0.18) 0%, transparent 70%),
-      radial-gradient(ellipse 60% 80% at 40% 70%, rgba(122,140,110,0.2) 0%, transparent 60%);
-  }
-  .mandala-bg {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%,-50%);
-    width: 520px; height: 520px;
-    opacity: 0.22;
-    animation: rotateSlow 60s linear infinite;
-  }
-  @keyframes rotateSlow { to { transform: translate(-50%,-50%) rotate(360deg); } }
-
-  .hero-badge {
-    position: absolute; bottom: 4rem; left: 3rem;
-    background: var(--warm); color: var(--cream);
-    padding: 1.4rem 1.8rem; border-radius: 4px;
-    font-family: 'Cormorant Garamond', serif;
-  }
-  .hero-badge strong { display: block; font-size: 2.4rem; color: var(--gold); font-weight: 600; line-height: 1; }
-  .hero-badge span { font-size: 0.85rem; opacity: 0.7; letter-spacing: 0.05em; }
-
-  .hero-pills {
-    position: absolute; top: 4rem; right: 2.5rem;
-    display: flex; flex-direction: column; gap: 0.7rem;
-  }
-  .pill {
-    background: rgba(28,21,16,0.7); backdrop-filter: blur(8px);
-    color: var(--cream); border-radius: 40px;
-    padding: 0.5rem 1.2rem;
-    font-size: 0.72rem; letter-spacing: 0.1em;
-    display: flex; align-items: center; gap: 0.5rem;
-  }
-  .pill-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
-
-  /* ── SECTION WRAPPER ── */
-  section { padding: 7rem 6rem; }
-  .section-label {
-    font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase;
-    color: var(--saffron); margin-bottom: 1rem;
-    display: flex; align-items: center; gap: 0.8rem;
-  }
-  .section-label::before { content:''; width: 30px; height: 1px; background: var(--saffron); display: block; }
-  .section-title {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(2rem, 3vw, 3rem);
-    font-weight: 600; line-height: 1.15;
-    color: var(--warm); margin-bottom: 1.5rem;
-  }
-  .section-title em { font-style: italic; font-family: 'Cormorant Garamond', serif; color: var(--saffron); }
-
-  /* ── ABOUT ── */
-  .about {
-    background: var(--warm);
-    display: grid; grid-template-columns: 1fr 1.2fr;
-    gap: 6rem; align-items: center;
-    padding: 8rem 6rem;
-  }
-  .about .section-title { color: var(--cream); }
-  .about .section-label { color: var(--gold); }
-  .about .section-label::before { background: var(--gold); }
-  .about-body {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.18rem; font-weight: 300; line-height: 1.85;
-    color: var(--blush);
-  }
-  .about-body p + p { margin-top: 1.2rem; }
-  .about-stats {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-  .stat-card {
-    border: 1px solid rgba(212,168,67,0.25);
-    padding: 2rem 1.5rem; border-radius: 4px;
-    text-align: center;
-    background: rgba(255,255,255,0.04);
-  }
-  .stat-card .num {
-    font-family: 'Cinzel', serif;
-    font-size: 2.6rem; color: var(--gold); font-weight: 600;
-  }
-  .stat-card .lbl {
-    font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--blush); opacity: 0.7; margin-top: 0.3rem;
-  }
-
-  /* ── PROGRAMS ── */
-  .programs { background: var(--cream); }
-  .programs-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 2.5rem; margin-top: 4rem;
-  }
-  .program-card {
-    border-radius: 6px; overflow: hidden;
-    position: relative;
-    transition: transform 0.35s;
-  }
-  .program-card:hover { transform: translateY(-6px); }
-  .program-header {
-    padding: 3.5rem 2.5rem 2rem;
-    position: relative;
-    overflow: hidden;
-  }
-  .program-card:nth-child(1) .program-header { background: linear-gradient(135deg, #7A8C6E 0%, #4a5e3e 100%); }
-  .program-card:nth-child(2) .program-header { background: linear-gradient(135deg, #C8622A 0%, #8B3A18 100%); }
-  .program-header::after {
-    content: '';
-    position: absolute; bottom: -30px; right: -20px;
-    width: 120px; height: 120px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.07);
-  }
-  .program-icon {
-    font-size: 2.4rem; margin-bottom: 1.2rem;
-    display: block;
-  }
-  .program-tag {
-    font-size: 0.68rem; letter-spacing: 0.25em; text-transform: uppercase;
-    color: rgba(255,255,255,0.65); margin-bottom: 0.6rem;
-  }
-  .program-name {
-    font-family: 'Cinzel', serif;
-    font-size: 1.7rem; color: #fff; font-weight: 600;
-    line-height: 1.2;
-  }
-  .program-body {
-    background: #fff;
-    padding: 2rem 2.5rem;
-    border: 1px solid rgba(0,0,0,0.06);
-    border-top: none;
-  }
-  .program-desc {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.08rem; line-height: 1.75;
-    color: #555; margin-bottom: 1.5rem;
-  }
-  .program-features { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
-  .program-features li {
-    font-size: 0.83rem; color: var(--warm);
-    display: flex; align-items: center; gap: 0.6rem;
-    letter-spacing: 0.02em;
-  }
-  .program-features li::before { content: '✦'; font-size: 0.55rem; color: var(--gold); }
-
-  /* ── OFFERINGS ── */
-  .offerings {
-    background: #F0EAE0;
-    padding: 7rem 6rem;
-  }
-  .offerings-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 2rem; margin-top: 4rem;
-  }
-  .offer-card {
-    background: var(--cream);
-    padding: 2.5rem 2rem; border-radius: 4px;
-    border-top: 3px solid var(--saffron);
-    transition: box-shadow 0.3s, transform 0.3s;
-  }
-  .offer-card:nth-child(even) { border-top-color: var(--sage); }
-  .offer-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.1); transform: translateY(-4px); }
-  .offer-icon { font-size: 2rem; margin-bottom: 1.2rem; }
-  .offer-title {
-    font-family: 'Cinzel', serif;
-    font-size: 1.05rem; color: var(--warm);
-    margin-bottom: 0.8rem;
-  }
-  .offer-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.05rem; line-height: 1.7; color: #666;
-  }
-
-  /* ── SCHEDULE ── */
-  .schedule { background: var(--warm); }
-  .schedule .section-title { color: var(--cream); }
-  .schedule .section-label { color: var(--gold); }
-  .schedule .section-label::before { background: var(--gold); }
-  .schedule-note {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.12rem; color: var(--blush); opacity: 0.75;
-    margin-bottom: 3rem;
-  }
-  .schedule-table {
-    width: 100%; border-collapse: collapse;
-    margin-top: 2rem;
-  }
-  .schedule-table th {
-    font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--gold); padding: 1rem 1.5rem;
-    border-bottom: 1px solid rgba(212,168,67,0.2);
-    text-align: left;
-  }
-  .schedule-table td {
-    padding: 1.2rem 1.5rem;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    font-size: 0.9rem; color: var(--blush);
-    vertical-align: middle;
-  }
-  .schedule-table tr:hover td { background: rgba(255,255,255,0.04); }
-  .badge-class {
-    display: inline-block;
-    padding: 0.3rem 0.9rem; border-radius: 2px;
-    font-size: 0.73rem; letter-spacing: 0.08em; font-weight: 500;
-    text-transform: uppercase;
-  }
-  .badge-women { background: rgba(200,98,42,0.25); color: #E8A07A; }
-  .badge-kids  { background: rgba(122,140,110,0.25); color: var(--light-sage); }
-  .badge-online { background: rgba(212,168,67,0.2); color: var(--gold); }
-
-  /* ── WHY US ── */
-  .why-us {
-    background: var(--cream);
-    text-align: center; padding: 8rem 6rem;
-  }
-  .why-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 2rem; margin-top: 5rem;
-  }
-  .why-item { padding: 2rem 1.5rem; }
-  .why-number {
-    font-family: 'Cinzel', serif;
-    font-size: 0.75rem; letter-spacing: 0.25em; color: var(--saffron);
-    margin-bottom: 1.4rem;
-  }
-  .why-item h3 {
-    font-family: 'Cinzel', serif;
-    font-size: 1rem; color: var(--warm);
-    margin-bottom: 0.8rem;
-  }
-  .why-item p {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.05rem; line-height: 1.7; color: #666;
-  }
-  .divider { width: 1px; background: rgba(0,0,0,0.1); }
-
-  /* ── TESTIMONIALS ── */
-  .testimonials { background: #F0EAE0; padding: 7rem 6rem; }
-  .testi-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 2rem; margin-top: 4rem;
-  }
-  .testi-card {
-    background: var(--cream); padding: 2.5rem;
-    border-radius: 4px; position: relative;
-  }
-  .testi-card::before {
-    content: '\201C';
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 5rem; line-height: 0.7;
-    color: var(--saffron); opacity: 0.2;
-    position: absolute; top: 1.5rem; left: 1.5rem;
-  }
-  .testi-text {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.1rem; line-height: 1.75; color: #555;
-    font-style: italic; margin-bottom: 1.5rem;
-  }
-  .testi-author { font-size: 0.8rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--saffron); font-weight: 500; }
-  .testi-role { font-size: 0.75rem; color: #999; margin-top: 0.2rem; }
-  .stars { color: var(--gold); font-size: 0.75rem; letter-spacing: 0.1em; margin-bottom: 1.2rem; }
-
-  /* ── CONTACT ── */
-  .contact {
-    background: var(--warm);
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 5rem; padding: 8rem 6rem;
-    align-items: start;
-  }
-  .contact .section-title { color: var(--cream); }
-  .contact .section-label { color: var(--gold); }
-  .contact .section-label::before { background: var(--gold); }
-  .contact-body {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.12rem; color: var(--blush); opacity: 0.75;
-    line-height: 1.8; margin-bottom: 2.5rem;
-  }
-  .contact-items { display: flex; flex-direction: column; gap: 1.4rem; }
-  .contact-item { display: flex; gap: 1rem; align-items: flex-start; }
-  .contact-ico {
-    width: 38px; height: 38px; border-radius: 50%;
-    background: rgba(212,168,67,0.15);
-    border: 1px solid rgba(212,168,67,0.25);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1rem; flex-shrink: 0;
-  }
-  .contact-item-text { font-size: 0.9rem; color: var(--blush); line-height: 1.6; }
-  .contact-item-label { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.2rem; }
-
-  .contact-form { display: flex; flex-direction: column; gap: 1.2rem; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
-  .form-group label {
-    display: block; font-size: 0.72rem; letter-spacing: 0.18em;
-    text-transform: uppercase; color: var(--gold);
-    margin-bottom: 0.5rem;
-  }
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    width: 100%; background: rgba(255,255,255,0.07);
-    border: 1px solid rgba(212,168,67,0.2);
-    border-radius: 2px; padding: 0.85rem 1rem;
-    color: var(--cream); font-family: 'Jost', sans-serif;
-    font-size: 0.9rem; outline: none;
-    transition: border-color 0.2s;
-  }
-  .form-group input::placeholder,
-  .form-group textarea::placeholder { color: rgba(250,245,236,0.3); }
-  .form-group input:focus,
-  .form-group select:focus,
-  .form-group textarea:focus { border-color: var(--gold); }
-  .form-group select option { background: var(--warm); }
-  .form-group textarea { resize: vertical; min-height: 100px; }
-  .btn-submit {
-    background: var(--saffron); color: #fff; border: none;
-    padding: 1rem 2.5rem; border-radius: 2px; cursor: pointer;
-    font-family: 'Jost', sans-serif;
-    font-size: 0.8rem; letter-spacing: 0.18em; text-transform: uppercase;
-    transition: background 0.2s; align-self: flex-start;
-  }
-  .btn-submit:hover { background: var(--gold); }
-
-  /* ── HOURS STRIP ── */
-  .hours-strip {
-    background: var(--saffron); padding: 1.5rem 6rem;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 1rem;
-  }
-  .hours-strip-title {
-    font-family: 'Cinzel', serif; font-size: 0.85rem;
-    letter-spacing: 0.2em; text-transform: uppercase; color: #fff;
-  }
-  .hours-list { display: flex; gap: 2.5rem; flex-wrap: wrap; }
-  .hours-item { font-size: 0.82rem; color: rgba(255,255,255,0.85); }
-  .hours-item strong { color: #fff; }
-  .online-badge {
-    background: rgba(255,255,255,0.2); color: #fff;
-    padding: 0.45rem 1.2rem; border-radius: 40px;
-    font-size: 0.72rem; letter-spacing: 0.15em;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    background: var(--deep);
-    padding: 4rem 6rem 2.5rem;
-  }
-  .footer-top {
-    display: grid; grid-template-columns: 1.5fr 1fr 1fr;
-    gap: 4rem; margin-bottom: 3rem;
-    padding-bottom: 3rem;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-  }
-  .footer-brand {
-    font-family: 'Cinzel', serif; font-size: 1.1rem;
-    color: var(--gold); font-weight: 600; margin-bottom: 1rem;
-  }
-  .footer-tagline {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem; color: rgba(250,245,236,0.45);
-    line-height: 1.7;
-  }
-  .footer-col h4 {
-    font-size: 0.72rem; letter-spacing: 0.25em; text-transform: uppercase;
-    color: var(--gold); margin-bottom: 1.2rem;
-  }
-  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
-  .footer-col ul a { font-size: 0.85rem; color: rgba(250,245,236,0.45); text-decoration: none; transition: color 0.2s; }
-  .footer-col ul a:hover { color: var(--cream); }
-  .footer-bottom {
-    display: flex; align-items: center; justify-content: space-between;
-    font-size: 0.75rem; color: rgba(255,255,255,0.25);
-  }
-  .footer-bottom a { color: var(--gold); text-decoration: none; }
-
-  /* ── ORNAMENT SVG ── */
-  .lotus-divider {
-    width: 100%; text-align: center; padding: 2rem 0;
-    color: var(--gold); opacity: 0.4; font-size: 1.4rem; letter-spacing: 0.5em;
-  }
-
-  /* ── FADE-IN ANIMATION ── */
-  .fade-in { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
-  .fade-in.visible { opacity: 1; transform: none; }
-  .delay-1 { transition-delay: 0.1s; }
-  .delay-2 { transition-delay: 0.2s; }
-  .delay-3 { transition-delay: 0.3s; }
-  .delay-4 { transition-delay: 0.4s; }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 1100px) {
-    nav { padding: 1rem 2rem; }
-    .nav-links { display: none; }
-    section, .about, .contact, .schedule, .hours-strip, footer, .offerings, .testimonials, .why-us, .programs { padding-left: 2rem; padding-right: 2rem; }
-    .hero { grid-template-columns: 1fr; }
-    .hero-right { display: none; }
-    .hero-left { padding: 9rem 2.5rem 5rem; }
-    .about { grid-template-columns: 1fr; gap: 3rem; }
-    .programs-grid, .offerings-grid, .testi-grid { grid-template-columns: 1fr; }
-    .why-grid { grid-template-columns: 1fr 1fr; }
-    .contact { grid-template-columns: 1fr; gap: 3rem; }
-    .footer-top { grid-template-columns: 1fr; gap: 2rem; }
-    .form-row { grid-template-columns: 1fr; }
-  }
+    flex-direction: column;
+    padding: 6rem 2rem 2rem;
+    transition: right 0.4s ease;
+    z-index: 8000;
+  }
+  .nav-links.active { right: 0; }
+  
+  .hero-title { font-size: clamp(2.5rem, 8vw, 3.5rem); }
+  .hero-sub { font-size: 1.1rem; }
+  .hero-actions { flex-direction: column; gap: 1rem; }
+  .btn-hero-primary, .btn-hero-ghost { width: 100%; text-align: center; }
+  
+  .about-right { grid-template-columns: 1fr; }
+  .off-grid { grid-template-columns: 1fr; }
+  .why-grid { grid-template-columns: 1fr; }
+  .why-cell { border-right: none; border-bottom: 1px solid rgba(0,0,0,0.07); }
+  .why-cell:last-child { border-bottom: none; }
+  
+  .schedule-table-wrap { overflow-x: auto; }
+  table { min-width: 600px; }
+  
+  .testi-card { width: 300px; padding: 2rem; }
+  .testi-card::before { font-size: 5rem; top: 1rem; left: 1rem; }
+  
+  .footer-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
-<body>
+<body class="loading">
 
-<!-- NAV -->
-<nav>
-  <div class="nav-logo">
+<!-- CUSTOM CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- SCROLL PROGRESS -->
+<div id="scroll-bar"></div>
+
+<!-- ════════════════ PRELOADER ════════════════ -->
+<div id="preloader">
+  <canvas id="loader-canvas" width="160" height="160"></canvas>
+  <p class="loader-text">Rhythm Divine</p>
+</div>
+
+<!-- ════════════════ NAV ════════════════ -->
+<nav id="nav">
+  <a href="#home" class="nav-logo">
     Rhythm Divine
-    <span>Yoga &amp; Wellness · Chennai</span>
+    <span>Yoga & Wellness · Chennai</span>
+  </a>
+  <div class="hamburger" id="hamburger">
+    <span></span><span></span><span></span>
   </div>
-  <ul class="nav-links">
+  <ul class="nav-links" id="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#programs">Programs</a></li>
     <li><a href="#schedule">Schedule</a></li>
+    <li><a href="#offerings">Classes</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
-  <a href="#contact" class="nav-cta">Join Now</a>
+  <a href="#contact" class="nav-cta">Begin Journey</a>
 </nav>
 
-<!-- HERO -->
+<!-- ════════════════ HERO ════════════════ -->
 <section class="hero" id="home">
-  <div class="hero-left">
-    <p class="hero-eyebrow">Anna Nagar West · Chennai</p>
-    <h1>
-      <em>Rhythm Divine</em><br>
-      Yoga &amp; Wellness Club
+  <canvas id="petal-canvas"></canvas>
+  <div class="hero-mandala-wrap">
+    <canvas id="mandala-canvas" width="700" height="700"></canvas>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-line"></div>
+      Anna Nagar West · Chennai · Est. 2014
+    </div>
+    <h1 class="hero-title">
+      <div class="line1">
+        <span class="word"><span>Rhythm</span></span>&nbsp;
+        <span class="word"><span>Divine</span></span>&nbsp;
+        <span class="word"><span>Yoga</span></span>
+      </div>
+      <div class="line2">
+        <span class="word"><span>&amp;</span></span>&nbsp;
+        <span class="word"><span>Wellness</span></span>&nbsp;
+        <span class="word"><span>Club</span></span>
+      </div>
     </h1>
     <p class="hero-sub">
-      A sacred space crafted for Women 40+ and Children 10+. Restore balance, build strength, and discover the rhythm within.
+      A sacred sanctuary crafted for <strong>Women 40+</strong> and <strong>Children 10+</strong> — where every breath finds its rhythm and every body its wisdom.
     </p>
     <div class="hero-actions">
-      <a href="#programs" class="btn-primary">Explore Programs</a>
-      <a href="#contact" class="btn-outline">Book a Trial</a>
+      <a href="#programs" class="btn-hero-primary ripple-btn">Explore Programs</a>
+      <a href="#contact" class="btn-hero-ghost ripple-btn">Book Free Trial</a>
     </div>
   </div>
 
-  <div class="hero-right">
-    <!-- Decorative Mandala SVG -->
-    <svg class="mandala-bg" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="250" cy="250" r="240" stroke="#C8622A" stroke-width="0.8"/>
-      <circle cx="250" cy="250" r="200" stroke="#D4A843" stroke-width="0.5"/>
-      <circle cx="250" cy="250" r="160" stroke="#C8622A" stroke-width="0.8"/>
-      <circle cx="250" cy="250" r="120" stroke="#D4A843" stroke-width="0.5"/>
-      <circle cx="250" cy="250" r="80" stroke="#C8622A" stroke-width="0.8"/>
-      <circle cx="250" cy="250" r="40" stroke="#D4A843" stroke-width="1"/>
-      <!-- Petals -->
-      <g stroke="#C8622A" stroke-width="0.7">
-        <ellipse cx="250" cy="90" rx="12" ry="50" transform="rotate(0 250 250)"/>
-        <ellipse cx="250" cy="90" rx="12" ry="50" transform="rotate(30 250 250)"/>
-        <ellipse cx="250" cy="90" rx="12" ry="50" transform="rotate(60 250 250)"/>
-        <ellipse cx="250" cy="90" rx="12" ry="50" transform="rotate(90 250 250)"/>
-        <ellipse cx="250" cy="90" rx="12" ry="50" transform="rotate(120 250 250)"/>
-        <ellipse cx="250" cy="90" rx="12" ry="50" transform="rotate(150 250 250)"/>
-        <ellipse cx="250" cy="90" rx="12" ry="50" transform="rotate(180 250 250)"/>
-        <ellipse cx="250" cy="90" rx="12" ry="50" transform="rotate(210 250 250)"/>
-        <ellipse cx="250" cy="90" rx="12" ry="50" transform="rotate(240 250 250)"/>
-        <ellipse cx="250" cy="90" rx="12" ry="50" transform="rotate(270 250 250)"/>
-        <ellipse cx="250" cy="90" rx="12" ry="50" transform="rotate(300 250 250)"/>
-        <ellipse cx="250" cy="90" rx="12" ry="50" transform="rotate(330 250 250)"/>
-      </g>
-      <!-- Outer petals -->
-      <g stroke="#D4A843" stroke-width="0.5">
-        <ellipse cx="250" cy="30" rx="10" ry="40" transform="rotate(0 250 250)"/>
-        <ellipse cx="250" cy="30" rx="10" ry="40" transform="rotate(45 250 250)"/>
-        <ellipse cx="250" cy="30" rx="10" ry="40" transform="rotate(90 250 250)"/>
-        <ellipse cx="250" cy="30" rx="10" ry="40" transform="rotate(135 250 250)"/>
-        <ellipse cx="250" cy="30" rx="10" ry="40" transform="rotate(180 250 250)"/>
-        <ellipse cx="250" cy="30" rx="10" ry="40" transform="rotate(225 250 250)"/>
-        <ellipse cx="250" cy="30" rx="10" ry="40" transform="rotate(270 250 250)"/>
-        <ellipse cx="250" cy="30" rx="10" ry="40" transform="rotate(315 250 250)"/>
-      </g>
-    </svg>
+  <div class="hero-floating-tags">
+    <div class="htag"><span class="htag-dot"></span> Online Classes Available</div>
+    <div class="htag"><span class="htag-dot"></span> Women 40+ Specialist</div>
+    <div class="htag"><span class="htag-dot"></span> Kids 10+ Programs</div>
+  </div>
 
-    <div class="hero-pills">
-      <div class="pill"><span class="pill-dot"></span> Online Classes Available</div>
-      <div class="pill"><span class="pill-dot"></span> Women 40+ Specialist</div>
-      <div class="pill"><span class="pill-dot"></span> Kids 10+ Programs</div>
-    </div>
-
-    <div class="hero-badge">
-      <strong>10+</strong>
-      <span>Years of Experience</span>
-    </div>
+  <div class="hero-scroll-hint">
+    <span class="scroll-label">Scroll</span>
+    <div class="scroll-line"></div>
   </div>
 </section>
 
-<!-- ABOUT -->
-<section class="about" id="about">
-  <div>
-    <p class="section-label fade-in">Our Story</p>
-    <h2 class="section-title fade-in delay-1">Where Wellness<br><em>Finds its Rhythm</em></h2>
-    <div class="about-body fade-in delay-2">
-      <p>Rhythm Divine was born from a vision to create a yoga and wellness sanctuary specifically designed for the unique needs of women in their 40s and beyond — and for the next generation of young practitioners from age 10.</p>
-      <p>Nestled in Anna Nagar West, Chennai, our studio offers a nurturing, non-competitive environment where every breath, every posture, and every session is tailored to your body's wisdom.</p>
-      <p>With online classes extending our reach beyond the studio walls, your wellness journey knows no boundaries.</p>
-    </div>
+<!-- ════════════════ MARQUEE ════════════════ -->
+<div class="marquee-strip">
+  <div class="marquee-track" id="marquee-track">
+    <!-- items inserted by JS -->
   </div>
-  <div class="about-stats fade-in delay-2">
-    <div class="stat-card"><div class="num">40+</div><div class="lbl">Women's Specialised Classes</div></div>
-    <div class="stat-card"><div class="num">10+</div><div class="lbl">Kids Programs from Age 10</div></div>
-    <div class="stat-card"><div class="num">∞</div><div class="lbl">Online Classes — Anywhere</div></div>
-    <div class="stat-card"><div class="num">🌿</div><div class="lbl">Holistic Wellness Approach</div></div>
-  </div>
-</section>
-
-<!-- PROGRAMS -->
-<section class="programs" id="programs">
-  <p class="section-label fade-in">What We Offer</p>
-  <h2 class="section-title fade-in delay-1">Two Paths,<br><em>One Divine Journey</em></h2>
-
-  <div class="programs-grid">
-    <div class="program-card fade-in delay-2">
-      <div class="program-header">
-        <span class="program-icon">🌸</span>
-        <p class="program-tag">Tailored for</p>
-        <h3 class="program-name">Women 40+<br>Wellness Club</h3>
-      </div>
-      <div class="program-body">
-        <p class="program-desc">A gentle yet powerful practice designed around the changing needs of the female body through perimenopause, menopause, and beyond. Restore, strengthen, and glow.</p>
-        <ul class="program-features">
-          <li>Hormonal balance through therapeutic yoga</li>
-          <li>Bone density & joint mobility focus</li>
-          <li>Stress relief and mental clarity</li>
-          <li>Breathwork & pranayama for vitality</li>
-          <li>Meditation and mindfulness</li>
-          <li>Community of like-minded women</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="program-card fade-in delay-3">
-      <div class="program-header">
-        <span class="program-icon">🌱</span>
-        <p class="program-tag">Designed for</p>
-        <h3 class="program-name">Kids 10+<br>Yoga Program</h3>
-      </div>
-      <div class="program-body">
-        <p class="program-desc">Fun, age-appropriate yoga that builds focus, flexibility, and confidence in children. A nurturing foundation for physical and emotional well-being that lasts a lifetime.</p>
-        <ul class="program-features">
-          <li>Posture & spinal health from an early age</li>
-          <li>Focus and concentration for school</li>
-          <li>Emotional regulation through movement</li>
-          <li>Playful, story-based yoga sessions</li>
-          <li>Breathing techniques for calm</li>
-          <li>Safe, encouraging group environment</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- OFFERINGS -->
-<section class="offerings" id="offerings">
-  <p class="section-label fade-in">Disciplines</p>
-  <h2 class="section-title fade-in delay-1">Our <em>Practice Offerings</em></h2>
-  <div class="offerings-grid">
-    <div class="offer-card fade-in delay-1">
-      <div class="offer-icon">🧘</div>
-      <h3 class="offer-title">Hatha Yoga</h3>
-      <p class="offer-text">Classical postures that align and strengthen the body, perfect for all stages of life.</p>
-    </div>
-    <div class="offer-card fade-in delay-2">
-      <div class="offer-icon">🌬️</div>
-      <h3 class="offer-title">Pranayama</h3>
-      <p class="offer-text">Ancient breathwork techniques to energise, calm, and balance the nervous system.</p>
-    </div>
-    <div class="offer-card fade-in delay-3">
-      <div class="offer-icon">🪷</div>
-      <h3 class="offer-title">Restorative Yoga</h3>
-      <p class="offer-text">Deep relaxation through supported poses, ideal for recovery and stress relief.</p>
-    </div>
-    <div class="offer-card fade-in delay-1">
-      <div class="offer-icon">🧠</div>
-      <h3 class="offer-title">Meditation</h3>
-      <p class="offer-text">Guided mindfulness and meditation sessions for clarity, peace, and inner calm.</p>
-    </div>
-    <div class="offer-card fade-in delay-2">
-      <div class="offer-icon">💻</div>
-      <h3 class="offer-title">Online Classes</h3>
-      <p class="offer-text">Live and recorded sessions you can attend from the comfort of your home, anywhere in the world.</p>
-    </div>
-    <div class="offer-card fade-in delay-3">
-      <div class="offer-icon">🌿</div>
-      <h3 class="offer-title">Wellness Workshops</h3>
-      <p class="offer-text">Special workshops on nutrition, self-care rituals, and holistic living throughout the year.</p>
-    </div>
-  </div>
-</section>
-
-<!-- SCHEDULE -->
-<section class="schedule" id="schedule">
-  <p class="section-label fade-in">Weekly Timetable</p>
-  <h2 class="section-title fade-in delay-1">Class <em>Schedule</em></h2>
-  <p class="schedule-note fade-in delay-2">Studio opens Monday–Saturday. Online classes available daily.</p>
-  <table class="schedule-table fade-in delay-2">
-    <thead>
-      <tr>
-        <th>Day</th>
-        <th>Time</th>
-        <th>Class</th>
-        <th>For</th>
-        <th>Format</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr><td>Monday</td><td>5:00 PM – 6:30 PM</td><td>Hatha Yoga</td><td><span class="badge-class badge-women">Women 40+</span></td><td>In-Studio</td></tr>
-      <tr><td>Monday</td><td>6:30 PM – 7:30 PM</td><td>Kids Yoga &amp; Movement</td><td><span class="badge-class badge-kids">Kids 10+</span></td><td>In-Studio</td></tr>
-      <tr><td>Tuesday</td><td>5:00 PM – 6:00 PM</td><td>Pranayama &amp; Breathwork</td><td><span class="badge-class badge-women">Women 40+</span></td><td><span class="badge-class badge-online">Online</span></td></tr>
-      <tr><td>Wednesday</td><td>5:00 PM – 6:30 PM</td><td>Restorative Yoga</td><td><span class="badge-class badge-women">Women 40+</span></td><td>In-Studio</td></tr>
-      <tr><td>Wednesday</td><td>6:30 PM – 7:30 PM</td><td>Junior Yoga</td><td><span class="badge-class badge-kids">Kids 10+</span></td><td>In-Studio</td></tr>
-      <tr><td>Thursday</td><td>5:30 PM – 6:30 PM</td><td>Meditation &amp; Mindfulness</td><td><span class="badge-class badge-women">Women 40+</span></td><td><span class="badge-class badge-online">Online</span></td></tr>
-      <tr><td>Friday</td><td>5:00 PM – 6:30 PM</td><td>Full Body Yoga Flow</td><td><span class="badge-class badge-women">Women 40+</span></td><td>In-Studio</td></tr>
-      <tr><td>Saturday</td><td>9:00 AM – 10:30 AM</td><td>Weekend Wellness Session</td><td><span class="badge-class badge-women">Women 40+</span></td><td>In-Studio</td></tr>
-      <tr><td>Saturday</td><td>10:30 AM – 11:30 AM</td><td>Kids Special Class</td><td><span class="badge-class badge-kids">Kids 10+</span></td><td>In-Studio</td></tr>
-    </tbody>
-  </table>
-</section>
-
-<!-- WHY US -->
-<section class="why-us">
-  <p class="section-label fade-in" style="justify-content:center; text-align:center;">Why Choose Us</p>
-  <h2 class="section-title fade-in delay-1" style="text-align:center;">The <em>Rhythm Divine</em> Difference</h2>
-  <div class="why-grid">
-    <div class="why-item fade-in delay-1">
-      <p class="why-number">01</p>
-      <h3>Age-Specific Expertise</h3>
-      <p>Our classes are meticulously designed for the physiological and emotional needs of women 40+ and children 10+.</p>
-    </div>
-    <div class="divider"></div>
-    <div class="why-item fade-in delay-2">
-      <p class="why-number">02</p>
-      <h3>Safe &amp; Nurturing Space</h3>
-      <p>A warm, non-judgmental environment where every body is celebrated and every pace is honoured.</p>
-    </div>
-    <div class="divider"></div>
-    <div class="why-item fade-in delay-3">
-      <p class="why-number">03</p>
-      <h3>Online Flexibility</h3>
-      <p>Can't make it to the studio? Our online classes bring Rhythm Divine directly to your home, seamlessly.</p>
-    </div>
-    <div class="divider"></div>
-    <div class="why-item fade-in delay-4">
-      <p class="why-number">04</p>
-      <h3>Holistic Approach</h3>
-      <p>We integrate yoga, breathwork, meditation, and wellness education for transformation that's truly complete.</p>
-    </div>
-  </div>
-</section>
-
-<!-- TESTIMONIALS -->
-<section class="testimonials">
-  <p class="section-label fade-in">Community Voices</p>
-  <h2 class="section-title fade-in delay-1">What Our <em>Students Say</em></h2>
-  <div class="testi-grid">
-    <div class="testi-card fade-in delay-1">
-      <div class="stars">★★★★★</div>
-      <p class="testi-text">Joining Rhythm Divine was the best decision I made for my health at 45. The classes are perfectly paced and I feel stronger than I did in my 30s.</p>
-      <div class="testi-author">Lakshmi R.</div>
-      <div class="testi-role">Member since 2022 · Women 40+ Program</div>
-    </div>
-    <div class="testi-card fade-in delay-2">
-      <div class="stars">★★★★★</div>
-      <p class="testi-text">My daughter, 12, absolutely loves the kids yoga sessions. Her focus at school has improved remarkably, and she looks forward to every class.</p>
-      <div class="testi-author">Priya K.</div>
-      <div class="testi-role">Parent · Kids 10+ Program</div>
-    </div>
-    <div class="testi-card fade-in delay-3">
-      <div class="stars">★★★★★</div>
-      <p class="testi-text">The online classes are a lifesaver. I travel frequently for work but I never miss a session. The instruction is warm, clear, and deeply motivating.</p>
-      <div class="testi-author">Meena S.</div>
-      <div class="testi-role">Online Member · Women 40+ Program</div>
-    </div>
-  </div>
-</section>
-
-<!-- HOURS STRIP -->
-<div class="hours-strip">
-  <span class="hours-strip-title">Studio Hours</span>
-  <div class="hours-list">
-    <span class="hours-item"><strong>Mon – Fri</strong>: 5:00 PM – 9:30 PM</span>
-    <span class="hours-item"><strong>Saturday</strong>: 9:00 AM – 12:00 PM</span>
-    <span class="hours-item"><strong>Sunday</strong>: By Appointment</span>
-  </div>
-  <span class="online-badge">✦ Online Classes Daily</span>
 </div>
 
-<!-- CONTACT -->
-<section class="contact" id="contact">
-  <div>
-    <p class="section-label">Get In Touch</p>
-    <h2 class="section-title">Begin Your<br><em>Wellness Journey</em></h2>
-    <p class="contact-body">Ready to transform your health and find your rhythm? Reach out to us — we'd love to welcome you into our community.</p>
-    <div class="contact-items">
-      <div class="contact-item">
-        <div class="contact-ico">📍</div>
-        <div class="contact-item-text">
-          <div class="contact-item-label">Address</div>
-          Euro Kids School, #3362 Z, AF Block 8th Street,<br>11th Main Rd, Anna Nagar West, Chennai – 600040
-        </div>
+<!-- ════════════════ ABOUT ════════════════ -->
+<section class="about" id="about">
+  <div class="about-left">
+    <p class="s-label reveal">Our Story</p>
+    <h2 class="s-title reveal d1">Where Wellness<br><em>Finds its Rhythm</em></h2>
+    <div class="about-text reveal d2">
+      <p>Rhythm Divine was born from a vision to create a yoga and wellness sanctuary specifically designed for the unique needs of women in their 40s and beyond — and for the next generation of young practitioners from age 10.</p>
+      <p>Nestled in the heart of Anna Nagar West, our studio offers a nurturing, non-competitive environment where every session is lovingly tailored to your body's wisdom and life stage.</p>
+      <p>With online classes extending our reach beyond studio walls, your wellness journey knows no boundaries.</p>
+    </div>
+    <a href="#programs" class="btn-hero-primary ripple-btn reveal d3" style="display:inline-block;text-decoration:none;">Discover Programs</a>
+  </div>
+  <div class="about-right">
+    <div class="stat-cell reveal">
+      <div class="stat-num" data-target="10">0</div>
+      <div class="stat-lbl">Years of Practice</div>
+    </div>
+    <div class="stat-cell reveal d1">
+      <div class="stat-num" data-target="40">0</div>
+      <div class="stat-lbl">Women 40+ Programs</div>
+    </div>
+    <div class="stat-cell reveal d2">
+      <div class="stat-num" data-suffix="+">∞</div>
+      <div class="stat-lbl">Online Classes</div>
+    </div>
+    <div class="stat-cell reveal d3">
+      <div class="stat-num">🌸</div>
+      <div class="stat-lbl">Holistic Wellness</div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════ PROGRAMS ════════════════ -->
+<section class="programs" id="programs">
+  <p class="s-label reveal">What We Offer</p>
+  <h2 class="s-title reveal d1">Two Paths,<br><em>One Divine Journey</em></h2>
+  <div class="programs-grid">
+    <div class="prog-card reveal d2" id="tilt1">
+      <div class="prog-banner">
+        <div class="prog-banner-ring"></div>
+        <div class="prog-banner-glow"></div>
+        <span class="prog-icon">🌸</span>
+        <p class="prog-for">Tailored for</p>
+        <h3 class="prog-name">Women 40+<br>Wellness Club</h3>
       </div>
-      <div class="contact-item">
-        <div class="contact-ico">📞</div>
-        <div class="contact-item-text">
-          <div class="contact-item-label">Phone</div>
-          080177 47002
-        </div>
+      <div class="prog-body">
+        <p class="prog-desc">A gentle yet powerful practice designed around the changing needs of the female body through perimenopause, menopause, and beyond.</p>
+        <ul class="prog-feats">
+          <li><span class="feat-dot">✦</span> Hormonal balance through therapeutic yoga</li>
+          <li><span class="feat-dot">✦</span> Bone density & joint mobility focus</li>
+          <li><span class="feat-dot">✦</span> Stress relief and mental clarity</li>
+          <li><span class="feat-dot">✦</span> Breathwork & pranayama for vitality</li>
+          <li><span class="feat-dot">✦</span> Guided meditation sessions</li>
+          <li><span class="feat-dot">✦</span> Empowering community of women</li>
+        </ul>
       </div>
-      <div class="contact-item">
-        <div class="contact-ico">🌐</div>
-        <div class="contact-item-text">
-          <div class="contact-item-label">Website</div>
-          rhydivine.com
-        </div>
+    </div>
+    <div class="prog-card reveal d3" id="tilt2">
+      <div class="prog-banner">
+        <div class="prog-banner-ring"></div>
+        <div class="prog-banner-glow"></div>
+        <span class="prog-icon">🌱</span>
+        <p class="prog-for">Designed for</p>
+        <h3 class="prog-name">Kids 10+<br>Yoga Program</h3>
       </div>
-      <div class="contact-item">
-        <div class="contact-ico">✉️</div>
-        <div class="contact-item-text">
-          <div class="contact-item-label">Online Classes</div>
-          Available for all programs — join from anywhere
-        </div>
+      <div class="prog-body">
+        <p class="prog-desc">Fun, age-appropriate yoga that builds focus, flexibility, and confidence in children — a nurturing foundation for lifelong well-being.</p>
+        <ul class="prog-feats">
+          <li><span class="feat-dot">✦</span> Posture & spinal health from early age</li>
+          <li><span class="feat-dot">✦</span> Focus and concentration for school</li>
+          <li><span class="feat-dot">✦</span> Emotional regulation through movement</li>
+          <li><span class="feat-dot">✦</span> Playful story-based yoga sessions</li>
+          <li><span class="feat-dot">✦</span> Breathing techniques for calm</li>
+          <li><span class="feat-dot">✦</span> Safe, encouraging group environment</li>
+        </ul>
       </div>
     </div>
   </div>
-
-  <form class="contact-form" onsubmit="handleSubmit(event)">
-    <div class="form-row">
-      <div class="form-group">
-        <label for="name">Full Name</label>
-        <input type="text" id="name" placeholder="Your name">
-      </div>
-      <div class="form-group">
-        <label for="phone">Phone Number</label>
-        <input type="tel" id="phone" placeholder="+91 XXXXX XXXXX">
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="email">Email Address</label>
-      <input type="email" id="email" placeholder="you@email.com">
-    </div>
-    <div class="form-group">
-      <label for="program">Program Interest</label>
-      <select id="program">
-        <option value="">Select a program</option>
-        <option>Women 40+ – In-Studio</option>
-        <option>Women 40+ – Online Classes</option>
-        <option>Kids 10+ – In-Studio</option>
-        <option>Kids 10+ – Online Classes</option>
-        <option>General Wellness Inquiry</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="message">Message</label>
-      <textarea id="message" placeholder="Tell us about your wellness goals or any questions you have…"></textarea>
-    </div>
-    <button type="submit" class="btn-submit" id="submit-btn">Send Enquiry</button>
-  </form>
 </section>
 
-<!-- FOOTER -->
+<!-- ════════════════ OFFERINGS ════════════════ -->
+<section class="offerings" id="offerings">
+  <p class="s-label reveal">Disciplines</p>
+  <h2 class="s-title reveal d1">Our Practice <em>Offerings</em></h2>
+  <div class="off-grid">
+    <div class="off-card reveal d1"><span class="off-ico">🧘</span><h3 class="off-title">Hatha Yoga</h3><p class="off-text">Classical postures that align and strengthen the body, perfect for every stage of life.</p></div>
+    <div class="off-card reveal d2"><span class="off-ico">🌬️</span><h3 class="off-title">Pranayama</h3><p class="off-text">Ancient breathwork to energise, calm, and balance the nervous system profoundly.</p></div>
+    <div class="off-card reveal d3"><span class="off-ico">🪷</span><h3 class="off-title">Restorative Yoga</h3><p class="off-text">Deep relaxation through supported poses — ideal for recovery and stress relief.</p></div>
+    <div class="off-card reveal d2"><span class="off-ico">🧠</span><h3 class="off-title">Meditation</h3><p class="off-text">Guided mindfulness sessions for mental clarity, emotional peace, and inner stillness.</p></div>
+    <div class="off-card reveal d3"><span class="off-ico">💻</span><h3 class="off-title">Online Classes</h3><p class="off-text">Live and recorded sessions you can join from anywhere in the world, any time.</p></div>
+    <div class="off-card reveal d4"><span class="off-ico">🌿</span><h3 class="off-title">Wellness Workshops</h3><p class="off-text">Special events on nutrition, self-care rituals, and holistic living throughout the year.</p></div>
+  </div>
+</section>
+
+<!-- ════════════════ SCHEDULE ════════════════ -->
+<section class="schedule" id="schedule">
+  <p class="s-label reveal">Weekly Timetable</p>
+  <h2 class="s-title reveal d1">Class <em>Schedule</em></h2>
+  <div class="schedule-table-wrap reveal d2">
+    <table>
+      <thead>
+        <tr>
+          <th>Day</th><th>Time</th><th>Class</th><th>For</th><th>Format</th>
+        </tr>
+      </thead>
+      <tbody id="schedule-body">
+        <tr><td>Monday</td><td>5:00 – 6:30 PM</td><td>Hatha Yoga</td><td><span class="badge b-w">Women 40+</span></td><td>In-Studio</td></tr>
+        <tr><td>Monday</td><td>6:30 – 7:30 PM</td><td>Kids Yoga & Movement</td><td><span class="badge b-k">Kids 10+</span></td><td>In-Studio</td></tr>
+        <tr><td>Tuesday</td><td>5:00 – 6:00 PM</td><td>Pranayama & Breathwork</td><td><span class="badge b-w">Women 40+</span></td><td><span class="badge b-o">Online</span></td></tr>
+        <tr><td>Wednesday</td><td>5:00 – 6:30 PM</td><td>Restorative Yoga</td><td><span class="badge b-w">Women 40+</span></td><td>In-Studio</td></tr>
+        <tr><td>Wednesday</td><td>6:30 – 7:30 PM</td><td>Junior Yoga</td><td><span class="badge b-k">Kids 10+</span></td><td>In-Studio</td></tr>
+        <tr><td>Thursday</td><td>5:30 – 6:30 PM</td><td>Meditation & Mindfulness</td><td><span class="badge b-w">Women 40+</span></td><td><span class="badge b-o">Online</span></td></tr>
+        <tr><td>Friday</td><td>5:00 – 6:30 PM</td><td>Full Body Yoga Flow</td><td><span class="badge b-w">Women 40+</span></td><td>In-Studio</td></tr>
+        <tr><td>Saturday</td><td>9:00 – 10:30 AM</td><td>Weekend Wellness Session</td><td><span class="badge b-w">Women 40+</span></td><td>In-Studio</td></tr>
+        <tr><td>Saturday</td><td>10:30 – 11:30 AM</td><td>Kids Special Class</td><td><span class="badge b-k">Kids 10+</span></td><td>In-Studio</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ════════════════ WHY US ════════════════ -->
+<section class="why" id="why">
+  <p class="s-label reveal" style="justify-content:center">Why Choose Us</p>
+  <h2 class="s-title reveal d1" style="text-align:center">The <em>Rhythm Divine</em> Difference</h2>
+  <div class="why-grid">
+    <div class="why-cell reveal d1"><span class="why-ico">🌸</span><p class="why-num">01</p><h3>Age-Specific Expertise</h3><p>Every class is meticulously designed for the physiological and emotional needs of women 40+ and children 10+.</p></div>
+    <div class="why-cell reveal d2"><span class="why-ico">🛡️</span><p class="why-num">02</p><h3>Safe & Nurturing Space</h3><p>A warm, non-judgmental environment where every body is celebrated at its own pace.</p></div>
+    <div class="why-cell reveal d3"><span class="why-ico">💻</span><p class="why-num">03</p><h3>Online Flexibility</h3><p>Can't make it to the studio? Our online classes bring Rhythm Divine seamlessly to your home.</p></div>
+    <div class="why-cell reveal d4"><span class="why-ico">🌿</span><p class="why-num">04</p><h3>Holistic Approach</h3><p>We blend yoga, breathwork, meditation, and wellness education for truly complete transformation.</p></div>
+  </div>
+</section>
+
+<!-- ════════════════ TESTIMONIALS ════════════════ -->
+<section class="testi">
+  <div class="testi-header">
+    <p class="s-label reveal">Community Voices</p>
+    <h2 class="s-title reveal d1">What Our <em>Students Say</em></h2>
+  </div>
+  <div class="testi-track" id="testi-track">
+    <!-- filled by JS -->
+  </div>
+</section>
+
+<!-- ════════════════ HOURS ════════════════ -->
+<div class="hours-bar">
+  <span class="hrs-label">Studio Hours</span>
+  <div class="hrs-list">
+    <span class="hrs-item"><strong>Mon – Fri</strong>: 5:00 PM – 9:30 PM</span>
+    <span class="hrs-item"><strong>Saturday</strong>: 9:00 AM – 12:00 PM</span>
+    <span class="hrs-item"><strong>Sunday</strong>: By Appointment</span>
+  </div>
+  <span class="hrs-online">✦ Online Classes Daily</span>
+</div>
+
+<!-- ════════════════ CONTACT ════════════════ -->
+<section class="contact" id="contact">
+  <div class="contact-left">
+    <p class="s-label reveal">Get In Touch</p>
+    <h2 class="s-title reveal d1">Begin Your<br><em>Wellness Journey</em></h2>
+    <p class="contact-desc reveal d2">Ready to transform your health? Reach out — we'd love to welcome you into our community.</p>
+    <div class="contact-items">
+      <div class="c-item reveal d2">
+        <div class="c-ico">📍</div>
+        <div class="c-text"><strong>Address</strong>Euro Kids School, #3362 Z, AF Block 8th Street, 11th Main Rd, Anna Nagar West, Chennai – 600040</div>
+      </div>
+      <div class="c-item reveal d3">
+        <div class="c-ico">📞</div>
+        <div class="c-text"><strong>Phone</strong>080177 47002</div>
+      </div>
+      <div class="c-item reveal d4">
+        <div class="c-ico">🌐</div>
+        <div class="c-text"><strong>Website</strong>rhydivine.com</div>
+      </div>
+      <div class="c-item reveal d5">
+        <div class="c-ico">✨</div>
+        <div class="c-text"><strong>Online Classes</strong>Available for all programs — join from anywhere in the world</div>
+      </div>
+    </div>
+  </div>
+  <div class="contact-right">
+    <p class="s-label reveal">Send Enquiry</p>
+    <h3 class="s-title reveal d1" style="font-size:clamp(1.6rem,2.5vw,2.2rem)">We'd Love to<br><em>Hear From You</em></h3>
+    <form class="form" onsubmit="submitForm(event)">
+      <div class="form-row">
+        <div class="fg reveal d2"><label>Full Name</label><input type="text" placeholder="Your name"></div>
+        <div class="fg reveal d3"><label>Phone Number</label><input type="tel" placeholder="+91 XXXXX XXXXX"></div>
+      </div>
+      <div class="fg reveal d3"><label>Email Address</label><input type="email" placeholder="you@email.com"></div>
+      <div class="fg reveal d4">
+        <label>Program Interest</label>
+        <select>
+          <option value="">Select a program</option>
+          <option>Women 40+ – In-Studio</option>
+          <option>Women 40+ – Online Classes</option>
+          <option>Kids 10+ – In-Studio</option>
+          <option>Kids 10+ – Online Classes</option>
+          <option>General Wellness Inquiry</option>
+        </select>
+      </div>
+      <div class="fg reveal d5"><label>Message</label><textarea placeholder="Tell us about your wellness goals…"></textarea></div>
+      <button type="submit" class="btn-send ripple-btn reveal d6"><span id="btn-text">Send Enquiry ✦</span></button>
+    </form>
+  </div>
+</section>
+
+<!-- ════════════════ FOOTER ════════════════ -->
 <footer>
-  <div class="footer-top">
+  <div class="footer-grid">
     <div>
       <div class="footer-brand">Rhythm Divine</div>
       <p class="footer-tagline">
         Yoga & Wellness Club for Women 40+, Kids 10+<br>
-        Anna Nagar West, Chennai, Tamil Nadu 600040<br><br>
-        Dedicated to creating spaces where every woman and child can discover the healing power of movement, breath, and stillness.
+        Anna Nagar West · Chennai, Tamil Nadu 600040<br><br>
+        Dedicated to creating spaces where every woman and child discovers the healing power of movement, breath, and stillness.
       </p>
     </div>
     <div class="footer-col">
-      <h4>Quick Links</h4>
+      <h4>Navigate</h4>
       <ul>
         <li><a href="#home">Home</a></li>
         <li><a href="#about">About Us</a></li>
@@ -905,31 +1273,312 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2025 Rhythm Divine Yoga &amp; Wellness Club. All rights reserved.</span>
-    <span>Designed with 🌸 for wellness · <a href="http://rhydivine.com">rhydivine.com</a></span>
+    <span>© 2025 Rhythm Divine Yoga & Wellness Club. All rights reserved.</span>
+    <span>Made with 🌸 for wellness · <a href="http://rhydivine.com">rhydivine.com</a></span>
   </div>
 </footer>
 
+<!-- ════════════════════════════════════════
+   JAVASCRIPT
+════════════════════════════════════════ -->
 <script>
-  // Fade-in on scroll
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.12 });
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+/* ─── CURSOR ─── */
+const dot  = document.getElementById('cursor-dot');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+(function animCursor(){
+  rx += (mx-rx)*0.14; ry += (my-ry)*0.14;
+  dot.style.left  = mx+'px'; dot.style.top = my+'px';
+  ring.style.left = rx+'px'; ring.style.top= ry+'px';
+  requestAnimationFrame(animCursor);
+})();
+document.querySelectorAll('a,button,input,select,textarea,.prog-card,.stat-cell').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('hover'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('hover'));
+});
 
-  // Nav scroll effect
-  window.addEventListener('scroll', () => {
-    document.querySelector('nav').style.padding = window.scrollY > 60 ? '0.7rem 4rem' : '1rem 4rem';
-  });
-
-  // Form submit
-  function handleSubmit(e) {
-    e.preventDefault();
-    const btn = document.getElementById('submit-btn');
-    btn.textContent = '✦ Message Sent!';
-    btn.style.background = '#7A8C6E';
-    setTimeout(() => { btn.textContent = 'Send Enquiry'; btn.style.background = ''; }, 3000);
+/* ─── PRELOADER MANDALA ─── */
+(function(){
+  const c = document.getElementById('loader-canvas');
+  const ctx = c.getContext('2d');
+  const cx=80,cy=80,R=70;
+  let angle=0,progress=0;
+  function drawLoader(){
+    ctx.clearRect(0,0,160,160);
+    // rotating ring
+    ctx.save();
+    ctx.translate(cx,cy);
+    ctx.rotate(angle);
+    for(let i=0;i<12;i++){
+      const a=i*(Math.PI*2/12);
+      const grd=ctx.createRadialGradient(0,0,0,0,0,R);
+      grd.addColorStop(0,'rgba(212,168,67,0)');
+      grd.addColorStop(1,'rgba(212,168,67,0.08)');
+      ctx.beginPath();
+      ctx.ellipse(0,-R*0.55,8,30,a,0,Math.PI*2);
+      ctx.fillStyle='rgba(212,168,67,0.3)';
+      ctx.fill();
+    }
+    ctx.restore();
+    // progress arc
+    ctx.beginPath();
+    ctx.arc(cx,cy,R,-Math.PI/2,-Math.PI/2+progress*Math.PI*2);
+    ctx.strokeStyle='rgba(200,98,42,0.8)';
+    ctx.lineWidth=2;
+    ctx.stroke();
+    // center dot
+    ctx.beginPath();
+    ctx.arc(cx,cy,5,0,Math.PI*2);
+    ctx.fillStyle='rgba(212,168,67,0.9)';
+    ctx.fill();
+    angle+=0.03;
+    progress+=0.012;
+    if(progress<1){ requestAnimationFrame(drawLoader); }
+    else {
+      setTimeout(()=>{
+        document.getElementById('preloader').classList.add('done');
+        document.body.classList.remove('loading');
+      },300);
+    }
   }
+  drawLoader();
+})();
+
+/* ─── PETAL CANVAS ─── */
+(function(){
+  const canvas = document.getElementById('petal-canvas');
+  const ctx = canvas.getContext('2d');
+  let W,H,petals=[];
+  function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+  resize(); window.addEventListener('resize',resize);
+  const COLORS=['rgba(200,98,42,','rgba(212,168,67,','rgba(232,213,192,','rgba(107,125,94,'];
+  function spawnPetal(){
+    return {
+      x: Math.random()*W, y: -20,
+      r: 3+Math.random()*7,
+      vx: (Math.random()-0.5)*0.6,
+      vy: 0.5+Math.random()*1.2,
+      rot: Math.random()*Math.PI*2,
+      rotV: (Math.random()-0.5)*0.04,
+      alpha: 0.1+Math.random()*0.35,
+      color: COLORS[Math.floor(Math.random()*COLORS.length)]
+    };
+  }
+  for(let i=0;i<60;i++){
+    const p=spawnPetal();
+    p.y=Math.random()*H;
+    petals.push(p);
+  }
+  function drawPetal(p){
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot);
+    ctx.beginPath();
+    ctx.ellipse(0,0,p.r,p.r*1.8,0,0,Math.PI*2);
+    ctx.fillStyle=p.color+p.alpha+')';
+    ctx.fill();
+    ctx.restore();
+  }
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    petals.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotV;
+      if(p.y>H+20){ Object.assign(p,spawnPetal()); }
+      drawPetal(p);
+    });
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+
+/* ─── HERO MANDALA CANVAS ─── */
+(function(){
+  const c = document.getElementById('mandala-canvas');
+  const ctx = c.getContext('2d');
+  const cx=350,cy=350;
+  let angle=0;
+  function draw(){
+    ctx.clearRect(0,0,700,700);
+    ctx.save(); ctx.translate(cx,cy);
+    for(let ring=1;ring<=8;ring++){
+      const r=ring*40;
+      ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(212,168,67,${0.4-ring*0.04})`;
+      ctx.lineWidth=0.8; ctx.stroke();
+      const petals=ring*6;
+      ctx.save(); ctx.rotate(angle*(ring%2===0?1:-1));
+      for(let i=0;i<petals;i++){
+        const a=i*(Math.PI*2/petals);
+        ctx.save(); ctx.rotate(a);
+        ctx.beginPath();
+        ctx.ellipse(0,-r+15,5,18,0,0,Math.PI*2);
+        ctx.fillStyle=`rgba(200,98,42,${0.08+ring*0.01})`;
+        ctx.fill();
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+    ctx.restore();
+    angle+=0.002;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ─── MARQUEE ─── */
+(function(){
+  const items=['Hatha Yoga','Pranayama','Restorative Yoga','Meditation','Kids Yoga','Online Classes','Women 40+','Wellness Workshops','Anna Nagar West','Breathwork'];
+  const track=document.getElementById('marquee-track');
+  let html='';
+  for(let i=0;i<4;i++){
+    items.forEach(it=>{ html+=`<span class="marquee-item">${it}<span class="marquee-sep">✦</span></span>`; });
+  }
+  track.innerHTML=html;
+})();
+
+/* ─── TESTIMONIALS ─── */
+(function(){
+  const reviews=[
+    {text:"Joining Rhythm Divine was the best decision I made for my health at 45. The classes are perfectly paced and I feel stronger than ever.",author:"Lakshmi R.",role:"Women 40+ Program · Member since 2022"},
+    {text:"My daughter (12) absolutely loves the kids yoga. Her focus at school has improved remarkably and she looks forward to every class.",author:"Priya K.",role:"Parent · Kids 10+ Program"},
+    {text:"The online classes are a lifesaver. I travel frequently but never miss a session. The instruction is warm, clear, and deeply motivating.",author:"Meena S.",role:"Online Member · Women 40+"},
+    {text:"I came with severe back pain and left with a new lease on life. The therapeutic approach here is truly unlike any other studio.",author:"Sundari V.",role:"Women 40+ Program · 2 Years"},
+    {text:"A non-judgmental space where I finally feel comfortable in my body again. The teacher's warmth is extraordinary.",author:"Revathi M.",role:"Women 40+ · Anna Nagar"},
+    {text:"My son is 11 and has transformed in just 3 months. Better posture, calmer mind, and so much more self-confidence.",author:"Anitha B.",role:"Parent · Kids 10+ Program"},
+  ];
+  const track=document.getElementById('testi-track');
+  let html='';
+  for(let i=0;i<2;i++){
+    reviews.forEach(r=>{
+      html+=`<div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">${r.text}</p>
+        <div class="testi-author">${r.author}</div>
+        <div class="testi-role">${r.role}</div>
+      </div>`;
+    });
+  }
+  track.innerHTML=html;
+})();
+
+/* ─── SCROLL PROGRESS ─── */
+window.addEventListener('scroll',()=>{
+  const pct=(window.scrollY/(document.body.scrollHeight-window.innerHeight))*100;
+  document.getElementById('scroll-bar').style.width=pct+'%';
+  const nav=document.getElementById('nav');
+  nav.classList.toggle('scrolled',window.scrollY>60);
+});
+
+/* ─── MOBILE MENU ─── */
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('nav-links');
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  navLinks.classList.toggle('active');
+});
+navLinks.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('active');
+    navLinks.classList.remove('active');
+  });
+});
+
+/* ─── REVEAL ON SCROLL ─── */
+const revObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.classList.add('in');
+  });
+},{threshold:0.1});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>revObs.observe(el));
+
+/* ─── COUNTER ANIMATION ─── */
+const counterObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const el=e.target;
+    const target=+el.dataset.target;
+    if(!target) return;
+    const suffix=el.dataset.suffix||'+';
+    let n=0;
+    const step=target/60;
+    const timer=setInterval(()=>{
+      n=Math.min(n+step,target);
+      el.textContent=Math.floor(n)+suffix;
+      if(n>=target) clearInterval(timer);
+    },25);
+    counterObs.unobserve(el);
+  });
+},{threshold:0.5});
+document.querySelectorAll('[data-target]').forEach(el=>counterObs.observe(el));
+
+/* ─── 3D CARD TILT ─── */
+['tilt1','tilt2'].forEach(id=>{
+  const card=document.getElementById(id);
+  if(!card) return;
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    const x=(e.clientX-r.left)/r.width-0.5;
+    const y=(e.clientY-r.top)/r.height-0.5;
+    card.style.transform=`perspective(900px) rotateY(${x*8}deg) rotateX(${-y*8}deg) translateZ(6px)`;
+  });
+  card.addEventListener('mouseleave',()=>{
+    card.style.transform='perspective(900px) rotateY(0deg) rotateX(0deg) translateZ(0)';
+    card.style.transition='transform 0.6s cubic-bezier(0.22,1,0.36,1)';
+  });
+  card.addEventListener('mouseenter',()=>{ card.style.transition=''; });
+});
+
+/* ─── SCHEDULE ROW STAGGER ─── */
+const schedObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const rows=document.querySelectorAll('#schedule-body tr');
+    rows.forEach((r,i)=>{
+      setTimeout(()=>r.classList.add('row-visible'),i*80);
+    });
+    schedObs.disconnect();
+  });
+},{threshold:0.1});
+const schedEl=document.querySelector('#schedule-body');
+if(schedEl) schedObs.observe(schedEl);
+
+/* ─── RIPPLE EFFECT ─── */
+document.querySelectorAll('.ripple-btn').forEach(btn=>{
+  btn.addEventListener('click',e=>{
+    const r=btn.getBoundingClientRect();
+    const x=e.clientX-r.left, y=e.clientY-r.top;
+    const size=Math.max(r.width,r.height);
+    const circle=document.createElement('div');
+    circle.className='ripple-circle';
+    circle.style.cssText=`width:${size}px;height:${size}px;left:${x-size/2}px;top:${y-size/2}px`;
+    btn.style.position='relative';
+    btn.style.overflow='hidden';
+    btn.appendChild(circle);
+    setTimeout(()=>circle.remove(),600);
+  });
+});
+
+/* ─── FORM SUBMIT ─── */
+function submitForm(e){
+  e.preventDefault();
+  const btn=document.getElementById('btn-text');
+  btn.textContent='✦ Message Sent!';
+  btn.closest('button').style.background='var(--sage)';
+  setTimeout(()=>{
+    btn.textContent='Send Enquiry ✦';
+    btn.closest('button').style.background='';
+  },3000);
+}
+
+/* ─── PARALLAX HERO ─── */
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY;
+  const heroContent=document.querySelector('.hero-content');
+  if(heroContent) heroContent.style.transform=`translateY(${y*0.25}px)`;
+  const mandala=document.querySelector('.hero-mandala-wrap');
+  if(mandala) mandala.style.transform=`translateY(calc(-50% + ${y*0.15}px))`;
+});
 </script>
 </body>
 </html>
