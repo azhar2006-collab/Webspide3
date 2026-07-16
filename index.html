@@ -651,8 +651,8 @@ section,.cta-section,.contact-section,.sections,.banner{scroll-margin-top:var(--
 .hww-badge-top{font-family:'Orbitron',sans-serif;font-size:clamp(1rem,2.5vw,1.45rem);font-weight:900;color:#fff;letter-spacing:1.5px;margin-bottom:14px;text-transform:uppercase;}
 .hww-sub-top{font-size:.92rem;color:rgba(255,255,255,.72);max-width:720px;margin:0 auto;line-height:1.65;}
 .hww-wrap{max-width:1180px;margin:0 auto;position:relative;z-index:1;}
-.hww-card{display:flex;align-items:stretch;border-radius:16px;background:rgba(7,22,79,.55);border:1px solid var(--card-border);box-shadow:0 10px 30px rgba(7,22,79,.2);overflow:hidden;min-height:520px;transition:border-color .35s,box-shadow .35s,transform .35s;backdrop-filter:blur(8px);}
-.hww-card:hover{border-color:rgba(192,38,184,.35);box-shadow:0 18px 45px rgba(139,92,246,.18);transform:translateY(-4px);}
+.hww-card{display:flex;align-items:stretch;border-radius:16px;background:transparent;border:none;box-shadow:none;overflow:visible;min-height:520px;transition:none;backdrop-filter:none;}
+.hww-card:hover{border-color:transparent;box-shadow:none;transform:none;}
 .hww-card-left{width:28%;min-width:210px;max-width:280px;padding:28px 22px 28px 26px;border-right:1px solid var(--card-border);display:flex;flex-direction:column;gap:22px;}
 .hww-card-left-title{font-family:'Exo 2',sans-serif;font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:6px;line-height:1.25;}
 .hww-card-left-desc{font-size:.72rem;color:rgba(255,255,255,.55);line-height:1.55;}
@@ -1435,19 +1435,19 @@ h6{font-weight:800!important;color:#C026B8!important}
   display: flex;
   align-items: stretch;
   border-radius: 16px;
-  background: #ffffff !important;
-  border: 1px solid var(--card-border) !important;
-  box-shadow: 0 10px 30px rgba(7, 22, 79, 0.06) !important;
-  overflow: hidden;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible;
   min-height: 520px;
-  transition: border-color 0.35s, box-shadow 0.35s, transform 0.35s;
-  backdrop-filter: blur(8px);
+  transition: none;
+  backdrop-filter: none !important;
 }
 
 .hww-card:hover {
-  border-color: rgba(192, 132, 252, 0.35) !important;
-  box-shadow: 0 18px 45px rgba(139, 92, 246, 0.12) !important;
-  transform: translateY(-4px);
+  border-color: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 .hww-card-left {
