@@ -1,129 +1,463 @@
-/* ═══════════════════════════════════════════════════════
-   WEBSPIDE — UNIFIED FONT SIZE OVERRIDE
-   All non-heading body text → 0.875rem (≈14px)
-   Headings (h1–h6, .section-title, .card-title, etc.)
-   are untouched — only body/UI text is normalised.
+cat > /mnt/user-data/outputs/font-override.css << 'CSSEOF'
+/* ═══════════════════════════════════════════════════════════════════
+   WEBSPIDE — FULLY RESPONSIVE FONT SYSTEM
+   Uses clamp() for fluid scaling across ALL desktop screen sizes.
+
+   Strategy:
+   • clamp(MIN, FLUID, MAX)
+   • MIN  = smallest size (at ~900px viewport)
+   • FLUID = vw-based linear scale
+   • MAX  = largest size (at ~1920px viewport)
+
+   Body text: clamp(13px, 0.85vw, 15px)  — stays uniform at any resolution
+   Small UI:  clamp(11px, 0.7vw,  13px)
+   Micro UI:  clamp(10px, 0.65vw, 12px)
 
    HOW TO USE:
-   Add  <link rel="stylesheet" href="font-override.css">
-   in <head> AFTER your main <style> block.
+   <link rel="stylesheet" href="font-override.css">
+   in <head> AFTER your existing <style> block.
+   ═══════════════════════════════════════════════════════════════════ */
 
-   OR paste everything between the two markers below
-   just before the closing </style> of your main block,
-   then also change:
-     html{font-size:112%}  →  html{font-size:100%}
-     p{font-size:1rem}     →  p{font-size:0.875rem}
-   ═══════════════════════════════════════════════════════ */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   1. BASE — kill the 112% inflation, switch to
+      a fluid root size that scales with viewport
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+html {
+  font-size: clamp(13px, 1vw, 16px) !important;
+}
 
-/* ── Base ── */
-html { font-size: 100% !important; }   /* was 112% */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   2. GLOBAL BODY TEXT
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+p {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+  line-height: 1.75 !important;
+}
 
-/* ── Global body text ── */
-p { font-size: 0.875rem !important; line-height: 1.75 !important; }
-
-/* ── Nav links ── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   3. NAVIGATION
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .nav-links-new a,
-.nav-links-new > li > button { font-size: 0.8rem !important; }
-.nav-item-products > button  { font-size: 0.8rem !important; }
-.nav-cta-new                 { font-size: 0.78rem !important; }
+.nav-links-new > li > button,
+.nav-item-products > button {
+  font-size: clamp(11px, 0.75vw, 14px) !important;
+}
+.nav-cta-new {
+  font-size: clamp(11px, 0.7vw, 13px) !important;
+}
+.mega-col-title {
+  font-size: clamp(12px, 0.8vw, 14px) !important;
+}
+.mega-link {
+  font-size: clamp(11px, 0.72vw, 13px) !important;
+}
+.simple-dropdown a {
+  font-size: clamp(11px, 0.72vw, 13px) !important;
+}
 
-/* ── Mega dropdown ── */
-.mega-col-title { font-size: 0.875rem !important; }
-.mega-link      { font-size: 0.8rem   !important; }
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   4. MOBILE MENU (fixed sizes fine here)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.mob-link          { font-size: 14px !important; }
+.mob-sub-link      { font-size: 13px !important; }
+.mob-section-title { font-size: 10px !important; }
+.mob-cta           { font-size: 14px !important; }
 
-/* ── Mobile menu ── */
-.mob-link         { font-size: 0.875rem !important; }
-.mob-sub-link     { font-size: 0.8rem   !important; }
-.mob-section-title{ font-size: 0.6rem   !important; }
-.mob-cta          { font-size: 0.875rem !important; }
-.simple-dropdown a{ font-size: 0.8rem   !important; }
-
-/* ── Hero ── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   5. HERO SECTION
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .hero-desc,
-.hero .hero-desc { font-size: 0.875rem !important; line-height: 1.75 !important; }
-.stat-label      { font-size: 0.78rem  !important; }
-.badge           { font-size: 0.75rem  !important; }
+.hero .hero-desc {
+  font-size: clamp(13px, 0.88vw, 15px) !important;
+  line-height: 1.75 !important;
+}
+.stat-label {
+  font-size: clamp(10px, 0.65vw, 12px) !important;
+  letter-spacing: 0.8px !important;
+}
+.badge {
+  font-size: clamp(10px, 0.65vw, 12px) !important;
+}
+.stat-num {
+  font-size: clamp(1.2rem, 1.6vw, 1.8rem) !important;
+}
 
-/* ── Orbital panel ── */
-.orb-panel-tag   { font-size: 0.78rem  !important; }
-.orb-panel-empty { font-size: 0.78rem  !important; }
-.orb-panel-num   { font-size: 0.65rem  !important; }
-.orb-panel-name  { font-size: 0.75rem  !important; }
-.orb-card-name   { font-size: 0.65rem  !important; }
-.orb-card-tag    { font-size: 0.7rem   !important; }
-.idle-label      { font-size: 0.6rem   !important; }
-.oi-label        { font-size: 0.6rem   !important; }
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   6. ORBITAL / HERO PANEL
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.orb-panel-tag,
+.orb-panel-empty { font-size: clamp(11px, 0.72vw, 13px) !important; }
+.orb-panel-num   { font-size: clamp(9px,  0.6vw,  11px) !important; }
+.orb-panel-name  { font-size: clamp(11px, 0.7vw,  13px) !important; }
+.orb-card-name   { font-size: clamp(9px,  0.62vw, 11px) !important; }
+.orb-card-tag    { font-size: clamp(10px, 0.65vw, 12px) !important; }
+.idle-label      { font-size: clamp(8px,  0.55vw, 10px) !important; }
+.oi-label        { font-size: clamp(8px,  0.55vw, 10px) !important; }
 
-/* ── Section header ── */
-.section-tag { font-size: 0.75rem  !important; }
-.section-sub { font-size: 0.875rem !important; line-height: 1.7 !important; }
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   7. SECTION HEADERS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.section-tag {
+  font-size: clamp(10px, 0.65vw, 12px) !important;
+  letter-spacing: 2px !important;
+}
+.section-sub {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+  line-height: 1.7 !important;
+}
 
-/* ── Banner cards ── */
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   8. BANNER CARDS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .b1-desc,
 .b1-card-desc,
-.b2-card-desc { font-size: 0.875rem !important; line-height: 1.75 !important; }
+.b2-card-desc {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+  line-height: 1.75 !important;
+}
 
-/* ── Service cards ── */
-.card-num          { font-size: 0.8rem   !important; }
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   9. SERVICE CARDS
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.card-num {
+  font-size: clamp(11px, 0.75vw, 14px) !important;
+  letter-spacing: 1.5px !important;
+}
+.card-title {
+  font-size: clamp(16px, 1.3vw, 22px) !important;
+}
 .card-desc,
-.card-desc-extra   { font-size: 0.875rem !important; line-height: 1.75 !important; }
-.svc-btn-primary   { font-size: 0.8rem   !important; }
-.svc-btn-link      { font-size: 0.78rem  !important; }
+.card-desc-extra {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+  line-height: 1.75 !important;
+}
+.svc-btn-primary {
+  font-size: clamp(12px, 0.78vw, 14px) !important;
+}
+.svc-btn-link {
+  font-size: clamp(11px, 0.72vw, 13px) !important;
+}
 
-/* ── Tech stack ── */
-.ts-badge          { font-size: 0.72rem  !important; }
-.ts-header h3      { font-size: 0.875rem !important; }
-.ts-header p       { font-size: 0.875rem !important; }
-.ts-tech-item span { font-size: 0.72rem  !important; }
-.ts-row-label span { font-size: 0.8rem   !important; }
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   10. TECH STACK
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.ts-badge {
+  font-size: clamp(10px, 0.65vw, 12px) !important;
+}
+.ts-header h3 {
+  font-size: clamp(12px, 0.85vw, 14px) !important;
+}
+.ts-header p {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+}
+.ts-tech-item span {
+  font-size: clamp(10px, 0.65vw, 12px) !important;
+}
+.ts-row-label span {
+  font-size: clamp(11px, 0.75vw, 13px) !important;
+  font-weight: 800 !important;
+}
 
-/* ── CTA section ── */
-.cta-section p   { font-size: 0.875rem !important; line-height: 1.75 !important; }
+/* Tech stack label — vertically centred with hexagon */
+.ts-row {
+  align-items: center !important;
+}
+.ts-row-label {
+  padding-top: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 62px !important;
+}
+.ts-row-label span {
+  display: block !important;
+  line-height: 1.35 !important;
+  transform: translateY(-4px) !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   11. CTA SECTION
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.cta-section p {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+  line-height: 1.75 !important;
+}
 .btn-primary,
-.btn-outline     { font-size: 0.875rem !important; }
+.btn-outline {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+}
 
-/* ── Why Choose Us ── */
-.villan-badge { font-size: 0.72rem  !important; }
-.left-desc    { font-size: 0.875rem !important; line-height: 1.75 !important; }
-.feature-desc { font-size: 0.875rem !important; line-height: 1.7  !important; }
-.feature-title{ font-size: 0.875rem !important; }
-.num          { font-size: 0.78rem  !important; }
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   12. WHY CHOOSE US
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.villan-badge {
+  font-size: clamp(10px, 0.65vw, 12px) !important;
+  letter-spacing: 1.5px !important;
+}
+.left-desc {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+  line-height: 1.75 !important;
+}
+.feature-title {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+}
+.feature-desc {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+  line-height: 1.7 !important;
+}
+.num {
+  font-size: clamp(11px, 0.72vw, 13px) !important;
+}
 
-/* ── How We Work ── */
-.hww-sub-top        { font-size: 0.875rem !important; }
-.hww-badge-top      { font-size: 0.78rem  !important; }
-.hww-card-left-title{ font-size: 0.95rem  !important; }
-.hww-card-left-desc { font-size: 0.875rem !important; }
-.hww-step-label     { font-size: 0.8rem   !important; }
-.hww-step-num       { font-size: 0.8rem   !important; }
-.hww-row-desc p     { font-size: 0.875rem !important; line-height: 1.75 !important; }
-.hww-sub-title      { font-size: 0.8rem   !important; }
-.hww-sub-desc       { font-size: 0.78rem  !important; }
-.hww-del-label      { font-size: 0.72rem  !important; }
-.hww-del-item       { font-size: 0.8rem   !important; line-height: 1.55 !important; }
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   13. HOW WE WORK
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.hww-sub-top {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+}
+.hww-badge-top {
+  font-size: clamp(11px, 0.72vw, 14px) !important;
+}
+.hww-card-left-title {
+  font-size: clamp(13px, 0.9vw, 16px) !important;
+}
+.hww-card-left-desc {
+  font-size: clamp(12px, 0.8vw, 14px) !important;
+}
+.hww-step-label {
+  font-size: clamp(11px, 0.75vw, 13px) !important;
+}
+.hww-step-num {
+  font-size: clamp(11px, 0.72vw, 13px) !important;
+}
+.hww-ph-text h3 {
+  font-size: clamp(13px, 1vw, 17px) !important;
+}
+.hww-row-desc p {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+  line-height: 1.75 !important;
+}
+.hww-sub-title {
+  font-size: clamp(11px, 0.75vw, 13px) !important;
+}
+.hww-sub-desc {
+  font-size: clamp(10px, 0.68vw, 12px) !important;
+}
+.hww-del-label {
+  font-size: clamp(10px, 0.65vw, 12px) !important;
+  letter-spacing: 1px !important;
+}
+.hww-del-item {
+  font-size: clamp(11px, 0.75vw, 13px) !important;
+  line-height: 1.55 !important;
+}
 
-/* ── Contact ── */
-.con-heading p  { font-size: 0.875rem !important; line-height: 1.75 !important; }
-.ci-txt label   { font-size: 0.7rem   !important; }
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   14. CONTACT SECTION
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.con-heading p {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+  line-height: 1.75 !important;
+}
+.ci-txt label {
+  font-size: clamp(9px, 0.6vw, 11px) !important;
+  letter-spacing: 1.2px !important;
+}
 .ci-txt span,
-.ci-txt a       { font-size: 0.8rem   !important; }
-.form-badge     { font-size: 0.72rem  !important; }
-.form-sub       { font-size: 0.875rem !important; line-height: 1.75 !important; }
-.fgroup label   { font-size: 0.72rem  !important; }
+.ci-txt a {
+  font-size: clamp(12px, 0.78vw, 14px) !important;
+}
+.form-badge {
+  font-size: clamp(10px, 0.65vw, 12px) !important;
+}
+.form-sub {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+  line-height: 1.75 !important;
+}
+.fgroup label {
+  font-size: clamp(10px, 0.65vw, 12px) !important;
+  letter-spacing: 0.8px !important;
+}
 .fgroup input,
 .fgroup select,
-.fgroup textarea{ font-size: 0.875rem !important; }
-.char-hint      { font-size: 0.72rem  !important; }
+.fgroup textarea {
+  font-size: clamp(13px, 0.82vw, 14px) !important;
+}
+.char-hint {
+  font-size: clamp(10px, 0.62vw, 12px) !important;
+}
 .terms-row span,
-.terms-row a    { font-size: 0.8rem   !important; }
-.submit-btn     { font-size: 0.875rem !important; }
-.success-state p{ font-size: 0.875rem !important; }
+.terms-row a {
+  font-size: clamp(12px, 0.75vw, 13px) !important;
+}
+.submit-btn {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+}
+.success-state p {
+  font-size: clamp(13px, 0.85vw, 15px) !important;
+}
 
-/* ── Footer ── */
-.ft-desc              { font-size: 0.875rem !important; }
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   15. FOOTER
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.ft-desc {
+  font-size: clamp(12px, 0.8vw, 14px) !important;
+  line-height: 1.7 !important;
+}
 .ft-contact-item span,
-.ft-contact-item a    { font-size: 0.8rem   !important; }
-.ft-links a           { font-size: 0.8rem   !important; }
-.fb-copy              { font-size: 0.8rem   !important; }
-.fb-legal a           { font-size: 0.78rem  !important; }
-.ft-col h4            { font-size: 0.72rem  !important; letter-spacing: 1.8px !important; }
+.ft-contact-item a {
+  font-size: clamp(11px, 0.72vw, 13px) !important;
+}
+.ft-links a {
+  font-size: clamp(12px, 0.75vw, 14px) !important;
+}
+.fb-copy {
+  font-size: clamp(11px, 0.72vw, 13px) !important;
+}
+.fb-legal a {
+  font-size: clamp(11px, 0.7vw,  13px) !important;
+}
+.ft-col h4 {
+  font-size: clamp(10px, 0.65vw, 12px) !important;
+  letter-spacing: 1.8px !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   16. BREAKPOINT OVERRIDES
+   Fine-tune at specific desktop widths where
+   the fluid scale needs a manual correction.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* ── Large desktop 1440px+ ── */
+@media (min-width: 1440px) {
+  p,
+  .hero-desc, .hero .hero-desc,
+  .section-sub, .left-desc,
+  .card-desc, .card-desc-extra,
+  .b1-desc, .b1-card-desc, .b2-card-desc,
+  .feature-desc, .hww-row-desc p,
+  .cta-section p, .con-heading p, .form-sub,
+  .success-state p {
+    font-size: 15px !important;
+  }
+
+  .nav-links-new a,
+  .nav-links-new > li > button,
+  .nav-item-products > button { font-size: 13px !important; }
+  .nav-cta-new                { font-size: 13px !important; }
+  .mega-link                  { font-size: 13px !important; }
+  .mega-col-title             { font-size: 14px !important; }
+
+  .card-title   { font-size: 21px !important; }
+  .card-num     { font-size: 13px !important; }
+
+  .ts-tech-item span   { font-size: 12px !important; }
+  .ts-row-label span   { font-size: 13px !important; }
+  .hww-step-label      { font-size: 13px !important; }
+  .hww-sub-title       { font-size: 13px !important; }
+  .hww-del-item        { font-size: 13px !important; }
+  .ft-links a          { font-size: 13px !important; }
+  .ft-desc             { font-size: 13px !important; }
+}
+
+/* ── Extra-large 1920px+ ── */
+@media (min-width: 1920px) {
+  html { font-size: 16px !important; }
+
+  p,
+  .hero-desc, .hero .hero-desc,
+  .section-sub, .left-desc,
+  .card-desc, .card-desc-extra,
+  .b1-desc, .b1-card-desc, .b2-card-desc,
+  .feature-desc, .hww-row-desc p,
+  .cta-section p, .con-heading p, .form-sub,
+  .success-state p {
+    font-size: 15px !important;
+  }
+
+  .nav-links-new a,
+  .nav-links-new > li > button  { font-size: 14px !important; }
+  .mega-link                    { font-size: 13px !important; }
+  .card-title                   { font-size: 22px !important; }
+  .svc-btn-primary              { font-size: 14px !important; }
+  .ft-links a, .ft-desc         { font-size: 14px !important; }
+}
+
+/* ── Medium desktop 1024px–1199px ── */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  p,
+  .hero-desc, .section-sub, .left-desc,
+  .card-desc, .card-desc-extra,
+  .b1-card-desc, .b2-card-desc,
+  .feature-desc, .hww-row-desc p,
+  .con-heading p, .form-sub {
+    font-size: 13px !important;
+  }
+
+  .nav-links-new a,
+  .nav-links-new > li > button { font-size: 11.5px !important; }
+  .nav-cta-new                 { font-size: 11px   !important; }
+  .card-title                  { font-size: 17px   !important; }
+  .mega-link                   { font-size: 11.5px !important; }
+  .hww-step-label              { font-size: 11px   !important; }
+  .hww-sub-title               { font-size: 11px   !important; }
+  .hww-del-item                { font-size: 11px   !important; }
+  .ts-row-label span           { font-size: 11px   !important; }
+}
+
+/* ── Tablet / small desktop 901px–1023px ── */
+@media (min-width: 901px) and (max-width: 1023px) {
+  p,
+  .hero-desc, .section-sub, .left-desc,
+  .card-desc, .card-desc-extra,
+  .feature-desc, .hww-row-desc p,
+  .con-heading p {
+    font-size: 13px !important;
+  }
+  .card-title         { font-size: 16px !important; }
+  .nav-links-new a,
+  .nav-links-new > li > button { font-size: 11px !important; }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   17. MOBILE — fixed px, no fluid needed
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 900px) {
+  html { font-size: 15px !important; }
+
+  p,
+  .hero-desc, .section-sub, .left-desc,
+  .card-desc, .card-desc-extra,
+  .b1-card-desc, .b2-card-desc,
+  .feature-desc, .hww-row-desc p,
+  .con-heading p, .form-sub {
+    font-size: 14px !important;
+  }
+
+  .card-title    { font-size: 18px !important; }
+  .section-sub   { font-size: 14px !important; }
+  .badge         { font-size: 11px !important; }
+  .stat-label    { font-size: 11px !important; }
+  .fgroup label  { font-size: 11px !important; }
+  .fgroup input,
+  .fgroup select,
+  .fgroup textarea { font-size: 14px !important; }
+  .ft-links a    { font-size: 13px !important; }
+  .ft-desc       { font-size: 13px !important; }
+  .hww-step-label{ font-size: 13px !important; }
+  .hww-del-item  { font-size: 13px !important; }
+}
+
+@media (max-width: 600px) {
+  html { font-size: 15px !important; }
+
+  p,
+  .hero-desc, .section-sub, .left-desc,
+  .card-desc, .card-desc-extra,
+  .feature-desc {
+    font-size: 13.5px !important;
+    line-height: 1.7 !important;
+  }
+
+  .card-title  { font-size: 16px !important; }
+  .ts-row-label{ display: none !important; }   /* hidden on mobile per original design */
+}
