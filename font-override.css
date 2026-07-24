@@ -1,4 +1,63 @@
-cat > /mnt/user-data/outputs/font-override.css << 'CSSEOF'
+
+/* ═══════════════════════════════════════════════════════════════════
+   WEBSPIDE — UNIFORM PARAGRAPH & BODY TEXT FONT SIZE SYSTEM
+   Enforces identical font size for ALL paragraphs across ALL pages
+   ═══════════════════════════════════════════════════════════════════ */
+
+p,
+.hero-desc,
+.hero .hero-desc,
+.section-sub,
+.left-desc,
+.card-desc,
+.card-desc-extra,
+.b1-desc,
+.b1-card-desc,
+.b2-card-desc,
+.feature-desc,
+.feature-content,
+.feature-content p,
+.hww-row-desc p,
+.hww-card-left-desc,
+.cta-section p,
+.con-heading p,
+.form-sub,
+.success-state p,
+.ft-desc,
+.ft-contact-item span,
+.ft-contact-item p {
+  font-size: 15px !important;
+  line-height: 1.75 !important;
+}
+
+@media (max-width: 600px) {
+  p,
+  .hero-desc,
+  .hero .hero-desc,
+  .section-sub,
+  .left-desc,
+  .card-desc,
+  .card-desc-extra,
+  .b1-desc,
+  .b1-card-desc,
+  .b2-card-desc,
+  .feature-desc,
+  .feature-content,
+  .feature-content p,
+  .hww-row-desc p,
+  .hww-card-left-desc,
+  .cta-section p,
+  .con-heading p,
+  .form-sub,
+  .success-state p,
+  .ft-desc,
+  .ft-contact-item span,
+  .ft-contact-item p {
+    font-size: 14px !important;
+    line-height: 1.7 !important;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    WEBSPIDE — FULLY RESPONSIVE FONT SYSTEM
    Uses clamp() for fluid scaling across ALL desktop screen sizes.
